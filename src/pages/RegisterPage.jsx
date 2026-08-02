@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Button from '../components/ui/Button'
 import { GoogleIcon, EyeIcon } from '../components/auth/AuthIcons'
-import registerHero from '../assets/auth/register-hero.jpg'
+import AuthHeroPanel from '../components/auth/AuthHeroPanel'
 
 export default function RegisterPage() {
   const { login } = useAuth()
@@ -32,18 +32,10 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-0 px-4 py-8 lg:p-6">
       <div className="flex w-full max-w-[400px] flex-col lg:w-auto lg:max-w-none lg:flex-row lg:items-stretch lg:gap-2 lg:rounded-3xl lg:border lg:border-neutral-200 lg:p-2">
-        {/* Hero image panel — desktop only, matches Figma node 16191:40692 */}
-        <div className="relative hidden overflow-hidden rounded-2xl bg-primary-100 lg:flex lg:w-[468px] lg:shrink-0 lg:flex-col lg:justify-between lg:p-6">
-          <img src={registerHero} alt="" className="absolute inset-0 size-full object-cover" />
-          <div className="relative z-10 flex items-center justify-between">
-            <span className="text-lg font-semibold tracking-tight text-neutral-0 drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]">
-              MotoPart
-            </span>
-          </div>
-          <div className="relative z-10 flex items-center gap-4">
-            <span className="text-[28px] font-medium tracking-[-0.56px] text-primary-200">02/03</span>
-            <span className="h-px flex-1 bg-neutral-0/60" />
-          </div>
+        {/* Hero panel — desktop only, layout matches Figma node 16191:40692.
+            Abstract geometric treatment, not photography — see AuthHeroPanel. */}
+        <div className="hidden lg:flex lg:w-[468px] lg:shrink-0">
+          <AuthHeroPanel step="02/03" />
         </div>
 
         {/* Form panel */}
