@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import Nav from '../components/layout/Nav'
 import Footer from '../components/layout/Footer'
@@ -27,10 +27,11 @@ export default function ProductDetailPage() {
 
   const product = PRODUCTS.find((p) => p.id === id)
 
-  if (!product) {
-    navigate('/')
-    return null
-  }
+  useEffect(() => {
+    if (!product) navigate('/')
+  }, [product, navigate])
+
+  if (!product) return null
 
   const category = CATEGORIES.find((c) => c.id === product.category)
   const thumbnails = [product.image, product.image, product.image, product.image]
