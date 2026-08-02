@@ -15,6 +15,7 @@ export default function CartPage() {
   const { items, updateQty, removeItem, clearCart, subtotal } = useCart()
   const navigate = useNavigate()
   const [pendingDeleteId, setPendingDeleteId] = useState(null)
+  const [confirmClearAll, setConfirmClearAll] = useState(false)
 
   const cartRows = items
     .map((item) => ({ ...item, product: PRODUCTS.find((p) => p.id === item.productId) }))
@@ -33,7 +34,7 @@ export default function CartPage() {
           {cartRows.length > 0 && (
             <button
               type="button"
-              onClick={clearCart}
+              onClick={() => setConfirmClearAll(true)}
               className="text-sm text-neutral-600 hover:text-neutral-900"
             >
               Hapus Semua
@@ -115,12 +116,20 @@ export default function CartPage() {
       </section>
       <Footer />
       <ConfirmDeleteModal
-        open={!!pendingDeleteId}
-        itemLabel={pendingProduct?.name}
-        onCancel={() => setPendingDeleteId(null)}
-        onConfirm={() => {
-          removeItem(pendingDeleteId)
+        open={!!pendingDeleteId || confirmClearAll}
+        itemLabel={confirmClearAll ? 'semua produk' : pendingProduct?.name}
+        onCancel={() => {
           setPendingDeleteId(null)
+          setConfirmClearAll(false)
+        }}
+        onConfirm={() => {
+          if (confirmClearAll) {
+            clearCart()
+            setConfirmClearAll(false)
+          } else {
+            removeItem(pendingDeleteId)
+            setPendingDeleteId(null)
+          }
         }}
       />
     </div>
