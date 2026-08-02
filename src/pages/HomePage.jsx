@@ -43,7 +43,7 @@ export default function HomePage() {
         </svg>
 
         <div className="relative z-10 flex flex-col items-center gap-12 lg:flex-row lg:items-center">
-          <div className="flex flex-1 flex-col items-start gap-6 text-left">
+          <div className="flex w-full flex-1 flex-col items-start gap-6 text-left">
             <div className="flex items-center gap-3 rounded-md border border-neutral-0/20 bg-neutral-0/10 px-3 py-1.5 backdrop-blur">
               <span aria-hidden="true" className="size-1 rounded-full bg-primary-200" />
               <span className="text-sm text-neutral-0">Sparepart original, siap kirim hari ini</span>
@@ -62,7 +62,7 @@ export default function HomePage() {
               <a href="#kategori">
                 <Button
                   variant="secondary"
-                  className="border-neutral-0/50 bg-transparent text-neutral-0 hover:bg-neutral-0/10"
+                  className="!border-neutral-0/50 !bg-transparent !text-neutral-0 hover:!bg-neutral-0/10"
                 >
                   Lihat Kategori
                 </Button>
@@ -70,7 +70,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="flex w-full flex-1 justify-center gap-4 overflow-x-auto pb-2 lg:w-auto lg:flex-col lg:overflow-visible lg:pb-0">
+          <div className="flex w-full flex-1 justify-start gap-4 overflow-x-auto pb-2 lg:w-auto lg:flex-col lg:overflow-visible lg:pb-0">
             {HERO_HIGHLIGHTS.map(({ product, badge }) => (
               <div
                 key={product.id}
