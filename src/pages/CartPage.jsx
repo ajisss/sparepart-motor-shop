@@ -8,20 +8,21 @@ import Button from '../components/ui/Button'
 import EmptyState from '../components/ui/EmptyState'
 import ConfirmDeleteModal from '../components/cart/ConfirmDeleteModal'
 import { useCart } from '../context/CartContext'
-import { PRODUCTS } from '../data/products'
+import { useProducts } from '../store/hooks'
 import { formatCurrency } from '../utils/formatCurrency'
 
 export default function CartPage() {
   const { items, updateQty, removeItem, clearCart, subtotal } = useCart()
+  const products = useProducts()
   const navigate = useNavigate()
   const [pendingDeleteId, setPendingDeleteId] = useState(null)
   const [confirmClearAll, setConfirmClearAll] = useState(false)
 
   const cartRows = items
-    .map((item) => ({ ...item, product: PRODUCTS.find((p) => p.id === item.productId) }))
+    .map((item) => ({ ...item, product: products.find((p) => p.id === item.productId) }))
     .filter((row) => row.product)
 
-  const pendingProduct = PRODUCTS.find((p) => p.id === pendingDeleteId)
+  const pendingProduct = products.find((p) => p.id === pendingDeleteId)
 
   return (
     <div>
