@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import Nav from '../components/layout/Nav'
 import Footer from '../components/layout/Footer'
@@ -6,43 +6,54 @@ import Rating from '../components/ui/Rating'
 import PriceTag from '../components/ui/PriceTag'
 import QuantitySelector from '../components/ui/QuantitySelector'
 import Button from '../components/ui/Button'
+import EmptyState from '../components/ui/EmptyState'
+import Carousel from '../components/ui/Carousel'
 import { useCart } from '../context/CartContext'
-import { PRODUCTS } from '../data/products'
-import { CATEGORIES } from '../data/categories'
+import { useProduct, useCategories } from '../store/hooks'
 
-// The Figma reference for this screen ("Detail Products - Overview", Vergelle
-// skincare template) shows literal lifestyle/product photography for the
-// gallery + thumbnails and a "bundle purchase" cross-sell card tied to a
-// second skincare SKU. Per project convention (see SearchPage), we don't
-// reuse any skincare imagery here — the gallery only ever renders the
-// product's own placeholder image (repeated for the thumbnail strip, since
-// mock data has a single image per product), and the bundle card is omitted
-// since this app's data model has no bundle/cross-sell relationship.
+function toEmbedUrl(url) {
+  const match = url.match(/[?&]v=([^&]+)/)
+  const id = match ? match[1] : null
+  return id ? `https://www.youtube.com/embed/${id}` : url
+}
+
 export default function ProductDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { addItem } = useCart()
+  const categories = useCategories()
   const [qty, setQty] = useState(1)
-  const [activeThumb, setActiveThumb] = useState(0)
+  const [added, setAdded] = useState(false)
 
-  const product = PRODUCTS.find((p) => p.id === id)
+  const product = useProduct(id)
 
-  useEffect(() => {
-    if (!product) navigate('/')
-  }, [product, navigate])
+  if (!product) {
+    return (
+      <div>
+        <Nav />
+        <EmptyState
+          title="Produk tidak ditemukan"
+          description="Produk yang kamu cari tidak tersedia atau sudah dihapus."
+          actionLabel="Cari Produk Lain"
+          onAction={() => navigate('/search')}
+        />
+        <Footer />
+      </div>
+    )
+  }
 
-  if (!product) return null
-
-  const category = CATEGORIES.find((c) => c.id === product.category)
-  const thumbnails = [product.images?.[0], product.images?.[0], product.images?.[0], product.images?.[0]]
+  const category = categories.find((c) => c.id === product.category)
+  const hasStock = product.stock > 0
 
   const handleAddToCart = () => {
     addItem(product.id, qty)
+    setAdded(true)
+    setTimeout(() => setAdded(false), 2000)
   }
 
   const handleBuyNow = () => {
     addItem(product.id, qty)
-    navigate('/cart')
+    navigate('/checkout')
   }
 
   return (
@@ -52,27 +63,38 @@ export default function ProductDetailPage() {
       <section className="flex flex-col gap-8 px-4 py-6 lg:flex-row lg:gap-10 lg:px-16 lg:py-10">
         {/* Gallery */}
         <div className="flex flex-col gap-3 lg:w-3/5">
-          <div className="aspect-square w-full overflow-hidden rounded-md bg-neutral-50">
-            <img
-              src={thumbnails[activeThumb]}
-              alt={product.name}
-              className="size-full object-contain p-10 lg:p-16"
-            />
-          </div>
-          <div className="grid grid-cols-4 gap-2 lg:gap-3">
-            {thumbnails.map((thumb, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => setActiveThumb(index)}
-                aria-label={`Lihat gambar ${index + 1}`}
-                className={`aspect-square overflow-hidden rounded-md bg-neutral-50 transition-colors ${
-                  activeThumb === index ? 'ring-2 ring-primary-600' : 'ring-1 ring-neutral-100'
-                }`}
-              >
-                <img src={thumb} alt="" className="size-full object-contain p-3" />
-              </button>
-            ))}
+          <Carousel images={product.images} alt={product.name} />
+
+          {product.videoUrl && (
+            <div className="aspect-video w-full overflow-hidden rounded-md bg-neutral-50">
+              <iframe
+                src={toEmbedUrl(product.videoUrl)}
+                title={`Video ${product.name}`}
+                className="size-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          )}
+
+          <div className="flex flex-col gap-3">
+            <h3 className="text-base font-semibold text-neutral-900">Ulasan Pelanggan</h3>
+            {product.testimonials.length === 0 ? (
+              <p className="text-sm text-neutral-600">Belum ada ulasan.</p>
+            ) : (
+              <ul className="flex flex-col gap-3">
+                {product.testimonials.map((t) => (
+                  <li key={t.id} className="rounded-md border border-neutral-100 p-4">
+                    <div className="mb-1 flex items-center justify-between">
+                      <span className="text-sm font-medium text-neutral-900">{t.author}</span>
+                      <span className="text-xs text-neutral-500">{t.date}</span>
+                    </div>
+                    <Rating value={t.rating} />
+                    <p className="mt-1 text-sm text-neutral-600">{t.text}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
 
@@ -105,12 +127,12 @@ export default function ProductDetailPage() {
             <PriceTag amount={product.price} />
             <span
               className={`rounded-pill px-4 py-1 text-xs font-medium uppercase tracking-[0.18px] ${
-                product.stock > 0
+                hasStock
                   ? 'bg-primary-100 text-primary-900'
                   : 'bg-neutral-100 text-neutral-600'
               }`}
             >
-              {product.stock > 0 ? `Stok: ${product.stock}` : 'Habis'}
+              {hasStock ? `Stok: ${product.stock}` : 'Stok habis'}
             </span>
           </div>
           <div className="border-t border-neutral-100" />
@@ -136,13 +158,23 @@ export default function ProductDetailPage() {
           <Rating value={product.rating} reviewCount={product.reviewCount} />
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <QuantitySelector value={qty} max={product.stock} onChange={setQty} />
+            <QuantitySelector value={qty} min={1} max={hasStock ? product.stock : 1} onChange={setQty} />
             <div className="flex flex-1 gap-3">
-              <Button variant="secondary" className="flex-1" onClick={handleAddToCart}>
-                Tambah ke Keranjang
+              <Button
+                variant="secondary"
+                className="flex-1"
+                onClick={handleAddToCart}
+                disabled={!hasStock}
+              >
+                {added ? 'Ditambahkan ✓' : 'Tambah ke Keranjang'}
               </Button>
-              <Button variant="primary" className="flex-1" onClick={handleBuyNow}>
-                Beli Sekarang
+              <Button
+                variant="primary"
+                className="flex-1"
+                onClick={handleBuyNow}
+                disabled={!hasStock}
+              >
+                Checkout Sekarang
               </Button>
             </div>
           </div>
