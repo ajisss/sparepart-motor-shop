@@ -1,12 +1,19 @@
 import { useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import Nav from '../components/layout/Nav'
 import Footer from '../components/layout/Footer'
 import CategoryChip from '../components/ui/CategoryChip'
 import ProductCard from '../components/ui/ProductCard'
 import EmptyState from '../components/ui/EmptyState'
-import { CATEGORIES } from '../data/categories'
-import { PRODUCTS } from '../data/products'
+import Select from '../components/ui/Select'
+import { useProducts, useCategories } from '../store/hooks'
 import searchIcon from '../assets/nav/search-icon.svg'
+
+const SORT_OPTIONS = [
+  { value: 'terbaru', label: 'Terbaru' },
+  { value: 'harga-terendah', label: 'Harga terendah' },
+  { value: 'harga-tertinggi', label: 'Harga tertinggi' },
+]
 
 // The Figma reference for this screen (Search / Results, "Vergelle" skincare
 // template) uses a soft banner of skincare product silhouettes behind the
@@ -22,18 +29,47 @@ import searchIcon from '../assets/nav/search-icon.svg'
 // components rather than the dropdown filters, matching the actual layout
 // direction (horizontal, full-width) at both breakpoints.
 export default function SearchPage() {
+  const allProducts = useProducts()
+  const categories = useCategories()
+  const [params, setParams] = useSearchParams()
+  const activeCategory = params.get('category')
+
   const [query, setQuery] = useState('')
-  const [activeCategory, setActiveCategory] = useState(null)
+  const [sort, setSort] = useState('terbaru')
+
+  const products = useMemo(() => allProducts.filter((p) => p.published === true), [allProducts])
+
+  const handleSelectCategory = (categoryId) => {
+    setParams((prev) => {
+      const next = new URLSearchParams(prev)
+      if (categoryId) {
+        next.set('category', categoryId)
+      } else {
+        next.delete('category')
+      }
+      return next
+    })
+  }
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return PRODUCTS.filter((p) => {
+    const filtered = products.filter((p) => {
       const matchesQuery =
         !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)
       const matchesCategory = !activeCategory || p.category === activeCategory
       return matchesQuery && matchesCategory
     })
-  }, [query, activeCategory])
+
+    const sorted = [...filtered]
+    if (sort === 'harga-terendah') {
+      sorted.sort((a, b) => a.price - b.price)
+    } else if (sort === 'harga-tertinggi') {
+      sorted.sort((a, b) => b.price - a.price)
+    } else {
+      sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    }
+    return sorted
+  }, [products, activeCategory, query, sort])
 
   return (
     <div>
@@ -73,16 +109,31 @@ export default function SearchPage() {
         </div>
       </section>
 
-      <section className="flex flex-wrap gap-2 overflow-x-auto px-4 py-6 lg:flex-wrap lg:px-16">
-        <CategoryChip label="Semua" active={!activeCategory} onClick={() => setActiveCategory(null)} />
-        {CATEGORIES.map((c) => (
-          <CategoryChip
-            key={c.id}
-            label={c.name}
-            active={activeCategory === c.id}
-            onClick={() => setActiveCategory(c.id)}
-          />
-        ))}
+      <section className="flex flex-wrap items-center justify-between gap-4 px-4 py-6 lg:px-16">
+        <div className="flex flex-wrap gap-2 overflow-x-auto">
+          <CategoryChip label="Semua" active={!activeCategory} onClick={() => handleSelectCategory(null)} />
+          {categories.map((c) => (
+            <CategoryChip
+              key={c.id}
+              label={c.name}
+              active={activeCategory === c.id}
+              onClick={() => handleSelectCategory(c.id)}
+            />
+          ))}
+        </div>
+
+        <Select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          aria-label="Urutkan produk"
+          className="w-full sm:w-auto"
+        >
+          {SORT_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </Select>
       </section>
 
       <section className="px-4 pb-16 lg:px-16">
