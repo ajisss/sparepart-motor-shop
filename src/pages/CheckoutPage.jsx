@@ -130,7 +130,7 @@ export default function CheckoutPage() {
       userId: currentUser?.id ?? null,
       items: orderItems,
       contact: data.contact,
-      address: data.address,
+      shippingAddress: data.address,
       shipping: data.shipping,
       promo: data.promo,
       subtotal,

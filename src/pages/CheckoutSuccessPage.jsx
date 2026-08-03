@@ -116,7 +116,7 @@ export default function CheckoutSuccessPage() {
 
   const isPending = order.status === 'Menunggu pembayaran'
   const headline = HEADLINE[order.status] || HEADLINE.default
-  const address = order.address || {}
+  const address = order.shippingAddress || {}
   const isGuest = !order.userId
 
   return (
