@@ -6,7 +6,7 @@ import { GoogleIcon, EyeIcon } from '../components/auth/AuthIcons'
 import AuthHeroPanel from '../components/auth/AuthHeroPanel'
 
 export default function LoginPage() {
-  const { login } = useAuth()
+  const { login, loginWithGoogle } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -14,19 +14,19 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(true)
   const [error, setError] = useState('')
 
-  function handleAuthenticated() {
-    login()
+  function handleGoogle() {
+    loginWithGoogle()
     navigate('/')
   }
 
   function handleSubmit(e) {
     e.preventDefault()
-    if (!email || !password) {
-      setError('Email dan password wajib diisi')
-      return
+    const res = login(email, password)
+    if (res.ok) {
+      navigate('/')
+    } else {
+      setError(res.error)
     }
-    setError('')
-    handleAuthenticated()
   }
 
   return (
@@ -53,7 +53,7 @@ export default function LoginPage() {
           <div className="flex w-full flex-col items-center gap-4">
             <button
               type="button"
-              onClick={handleAuthenticated}
+              onClick={handleGoogle}
               className="flex h-12 w-full items-center justify-center gap-2 rounded-pill border border-neutral-200 bg-neutral-0 px-6 text-base font-medium text-neutral-900 shadow-input transition-colors hover:bg-neutral-25"
             >
               <GoogleIcon />
