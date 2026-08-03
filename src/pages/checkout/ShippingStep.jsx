@@ -1,70 +1,157 @@
 import { useState } from 'react'
+import FormField from '../../components/ui/FormField'
+import Input from '../../components/ui/Input'
 import Button from '../../components/ui/Button'
+import { useAuth } from '../../context/AuthContext'
+import { useStore } from '../../store/StoreProvider'
 
-export default function ShippingStep({ data, onChange, onNext }) {
-  const { address } = data
+const ADDRESS_FIELDS = [
+  { key: 'recipientName', label: 'Nama penerima', placeholder: 'Nama lengkap penerima' },
+  { key: 'phone', label: 'Nomor telepon', placeholder: '08xxxxxxxxxx' },
+  { key: 'line', label: 'Alamat lengkap', placeholder: 'Nama jalan, nomor, kelurahan, kecamatan' },
+  { key: 'city', label: 'Kota/Kabupaten', placeholder: 'Kota' },
+  { key: 'province', label: 'Provinsi', placeholder: 'Provinsi' },
+  { key: 'postalCode', label: 'Kode pos', placeholder: '40111' },
+]
+
+export default function AddressStep({ data, onChange, onNext, onBack, mode }) {
+  const { currentUser } = useAuth()
+  const { setDefaultAddress } = useStore()
   const [touched, setTouched] = useState(false)
 
-  const isValid = Boolean(address.name && address.phone && address.fullAddress)
+  const defaultAddr =
+    mode === 'account' && currentUser
+      ? currentUser.addresses?.find((a) => a.id === currentUser.defaultAddressId)
+      : null
+  const [editing, setEditing] = useState(!defaultAddr)
+
+  const { contact, address } = data
+  const showAddressForm = mode === 'guest' || editing || !defaultAddr
+
+  const setContact = (patch) => onChange({ contact: { ...contact, ...patch } })
+  const setAddress = (patch) => onChange({ address: { ...address, ...patch } })
+
+  const contactValid =
+    mode !== 'guest' || Boolean(contact.name && contact.phone && contact.email)
+  const addressValid =
+    !showAddressForm || ADDRESS_FIELDS.every((f) => Boolean(address[f.key]))
+  const isValid = contactValid && addressValid
 
   function handleSubmit(e) {
     e.preventDefault()
     setTouched(true)
     if (!isValid) return
+    // Persist a first-time address to the profile so it becomes the default.
+    if (mode === 'account' && !defaultAddr && currentUser) {
+      setDefaultAddress(currentUser.id, { id: 'a-' + Date.now(), ...address })
+    }
     onNext()
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-4 lg:p-6">
-      <div>
-        <h2 className="text-base font-semibold text-neutral-900">Detail kontak</h2>
-        <div className="mt-3 flex flex-col gap-4 rounded-2xl border border-neutral-100 p-4">
-          <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-neutral-900">Nama penerima</span>
-            <input
-              value={address.name}
-              onChange={(e) => onChange({ address: { ...address, name: e.target.value } })}
-              placeholder="Nama lengkap"
-              className="h-10 rounded-[10px] border border-neutral-200 bg-neutral-25 px-3 text-sm text-neutral-900 placeholder:text-neutral-600 focus:border-primary-600 focus:outline-none"
-            />
-            {touched && !address.name && (
-              <span className="text-xs text-red-500">Nama penerima wajib diisi</span>
-            )}
-          </label>
-          <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-medium text-neutral-900">Nomor telepon</span>
-            <input
-              value={address.phone}
-              onChange={(e) => onChange({ address: { ...address, phone: e.target.value } })}
-              placeholder="08xxxxxxxxxx"
-              className="h-10 rounded-[10px] border border-neutral-200 bg-neutral-25 px-3 text-sm text-neutral-900 placeholder:text-neutral-600 focus:border-primary-600 focus:outline-none"
-            />
-            {touched && !address.phone && (
-              <span className="text-xs text-red-500">Nomor telepon wajib diisi</span>
-            )}
-          </label>
+      {mode === 'guest' && (
+        <div>
+          <h2 className="text-base font-semibold text-neutral-900">Detail kontak</h2>
+          <div className="mt-3 flex flex-col gap-4 rounded-2xl border border-neutral-100 p-4">
+            <FormField
+              label="Nama"
+              error={touched && !contact.name ? 'Nama wajib diisi' : ''}
+            >
+              <Input
+                value={contact.name}
+                onChange={(e) => setContact({ name: e.target.value })}
+                placeholder="Nama lengkap"
+                error={touched && !contact.name}
+              />
+            </FormField>
+            <FormField
+              label="Nomor telepon"
+              error={touched && !contact.phone ? 'Nomor telepon wajib diisi' : ''}
+            >
+              <Input
+                value={contact.phone}
+                onChange={(e) => setContact({ phone: e.target.value })}
+                placeholder="08xxxxxxxxxx"
+                error={touched && !contact.phone}
+              />
+            </FormField>
+            <FormField
+              label="Email"
+              error={touched && !contact.email ? 'Email wajib diisi' : ''}
+            >
+              <Input
+                type="email"
+                value={contact.email}
+                onChange={(e) => setContact({ email: e.target.value })}
+                placeholder="nama@email.com"
+                error={touched && !contact.email}
+              />
+            </FormField>
+          </div>
         </div>
-      </div>
+      )}
+
+      {mode === 'account' && (
+        <div>
+          <h2 className="text-base font-semibold text-neutral-900">Detail kontak</h2>
+          <div className="mt-3 rounded-2xl border border-neutral-100 p-4 text-sm text-neutral-600">
+            <p className="font-medium text-neutral-900">{contact.name}</p>
+            <p>{contact.phone}</p>
+            <p>{contact.email}</p>
+          </div>
+        </div>
+      )}
 
       <div>
-        <h2 className="text-base font-semibold text-neutral-900">Alamat pengiriman</h2>
-        <div className="mt-3 flex flex-col gap-1.5 rounded-2xl border border-neutral-100 p-4">
-          <span className="text-xs font-medium text-neutral-900">Alamat lengkap</span>
-          <textarea
-            value={address.fullAddress}
-            onChange={(e) => onChange({ address: { ...address, fullAddress: e.target.value } })}
-            placeholder="Nama jalan, nomor rumah, kelurahan, kecamatan, kota, kode pos"
-            rows={3}
-            className="rounded-[10px] border border-neutral-200 bg-neutral-25 px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-600 focus:border-primary-600 focus:outline-none"
-          />
-          {touched && !address.fullAddress && (
-            <span className="text-xs text-red-500">Alamat lengkap wajib diisi</span>
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-semibold text-neutral-900">Alamat pengiriman</h2>
+          {mode === 'account' && defaultAddr && (
+            <button
+              type="button"
+              onClick={() => setEditing((v) => !v)}
+              className="text-sm font-medium text-primary-600 underline"
+            >
+              {editing ? 'Gunakan alamat tersimpan' : 'Ubah/Tambah alamat'}
+            </button>
           )}
         </div>
+
+        {mode === 'account' && defaultAddr && !editing ? (
+          <div className="mt-3 rounded-2xl border border-primary-600 bg-primary-25 p-4 text-sm">
+            <p className="font-medium text-neutral-900">{address.recipientName}</p>
+            <p className="text-neutral-600">{address.phone}</p>
+            <p className="mt-1 text-neutral-600">
+              {address.line}, {address.city}, {address.province} {address.postalCode}
+            </p>
+          </div>
+        ) : (
+          <div className="mt-3 grid grid-cols-1 gap-4 rounded-2xl border border-neutral-100 p-4 sm:grid-cols-2">
+            {ADDRESS_FIELDS.map((f) => (
+              <FormField
+                key={f.key}
+                label={f.label}
+                error={touched && !address[f.key] ? `${f.label} wajib diisi` : ''}
+              >
+                <Input
+                  value={address[f.key]}
+                  onChange={(e) => setAddress({ [f.key]: e.target.value })}
+                  placeholder={f.placeholder}
+                  error={touched && !address[f.key]}
+                />
+              </FormField>
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="flex justify-end border-t border-neutral-100 pt-4">
-        <Button type="submit" variant="primary" className="w-full lg:w-auto">
+      <div className="flex flex-col-reverse gap-3 border-t border-neutral-100 pt-4 sm:flex-row sm:justify-end">
+        {mode === 'guest' && (
+          <Button type="button" variant="secondary" onClick={onBack} className="w-full sm:w-auto">
+            Kembali
+          </Button>
+        )}
+        <Button type="submit" variant="primary" className="w-full sm:w-auto">
           Lanjut ke Pengiriman
         </Button>
       </div>
