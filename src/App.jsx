@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { StoreProvider } from './store/StoreProvider'
 import { AuthProvider } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import LoginPage from './pages/LoginPage'
@@ -13,20 +14,22 @@ import CheckoutSuccessPage from './pages/CheckoutSuccessPage'
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <CartProvider>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/" element={<HomePage />} />
-            <Route path="/search" element={<SearchPage />} />
-            <Route path="/product/:id" element={<ProductDetailPage />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
-          </Routes>
-        </CartProvider>
-      </AuthProvider>
+      <StoreProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/" element={<HomePage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/product/:id" element={<ProductDetailPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
+            </Routes>
+          </CartProvider>
+        </AuthProvider>
+      </StoreProvider>
     </BrowserRouter>
   )
 }
