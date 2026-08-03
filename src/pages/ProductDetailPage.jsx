@@ -87,7 +87,7 @@ export default function ProductDetailPage() {
                   <li key={t.id} className="rounded-md border border-neutral-100 p-4">
                     <div className="mb-1 flex items-center justify-between">
                       <span className="text-sm font-medium text-neutral-900">{t.author}</span>
-                      <span className="text-xs text-neutral-500">{t.date}</span>
+                      <span className="text-xs text-neutral-600">{t.date}</span>
                     </div>
                     <Rating value={t.rating} />
                     <p className="mt-1 text-sm text-neutral-600">{t.text}</p>
