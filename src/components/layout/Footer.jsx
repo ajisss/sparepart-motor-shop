@@ -59,7 +59,7 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-neutral-100 px-4 py-6 text-center text-sm text-neutral-600 lg:px-16">
-        © {new Date().getFullYear()} MotoPart. Prototype for demo purposes only.
+        © {new Date().getFullYear()} DMB Moto Shop. Prototype for demo purposes only.
       </div>
     </footer>
   )

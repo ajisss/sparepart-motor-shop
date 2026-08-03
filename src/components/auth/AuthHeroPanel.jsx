@@ -21,7 +21,7 @@ export default function AuthHeroPanel({ step }) {
       </svg>
 
       <div className="relative z-10 flex items-center justify-between">
-        <span className="text-lg font-semibold tracking-tight text-neutral-900">MotoPart</span>
+        <span className="text-lg font-semibold tracking-tight text-neutral-900">DMB Moto Shop</span>
       </div>
 
       <div className="relative z-10 flex items-center gap-4">

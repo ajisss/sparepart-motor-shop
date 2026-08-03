@@ -45,7 +45,7 @@ export default function LoginPage() {
         {/* Form panel */}
         <div className="flex w-full flex-col justify-center gap-6 lg:w-[468px] lg:p-8">
           <div className="flex flex-col items-center gap-2 text-center lg:items-start lg:text-left">
-            <span className="mb-2 text-lg font-semibold text-neutral-900 lg:hidden">MotoPart</span>
+            <span className="mb-2 text-lg font-semibold text-neutral-900 lg:hidden">DMB Moto Shop</span>
             <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 lg:text-[28px]">
               Selamat datang kembali!
             </h1>

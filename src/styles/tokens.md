@@ -90,3 +90,15 @@ Only one shadow effect was found on the extracted frame, on the input field styl
 
 No other shadow styles (e.g. card elevation) were found on this frame — cards in the
 design use borders/flat backgrounds rather than drop shadows.
+
+## Semantic colors (POC additions — not from the original Figma)
+
+Added in SP2 for form validation and order-status badges. Not part of the source
+Figma file.
+
+| Token | Hex |
+|---|---|
+| success | #16A34A |
+| error | #DC2626 |
+| warning | #D97706 |
+| info | #2563EB |

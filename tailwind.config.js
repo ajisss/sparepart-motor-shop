@@ -27,6 +27,10 @@ export default {
           800: '#404D33',
           900: '#102100',
         },
+        success: '#16A34A',
+        error: '#DC2626',
+        warning: '#D97706',
+        info: '#2563EB',
       },
       fontFamily: {
         sans: ['Instrument Sans', 'sans-serif'],
