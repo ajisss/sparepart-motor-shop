@@ -41,6 +41,7 @@ export function StoreProvider({ children }) {
   // Orders
   const createOrder = (orderInput) => {
     const order = {
+      tracking: null,
       ...orderInput,
       id: generateOrderNumber(),
       createdAt: new Date().toISOString(),
