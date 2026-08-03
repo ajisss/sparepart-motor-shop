@@ -1,8 +1,11 @@
-import { useEffect } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import Nav from '../components/layout/Nav'
 import Footer from '../components/layout/Footer'
 import Button from '../components/ui/Button'
+import EmptyState from '../components/ui/EmptyState'
+import StatusBadge from '../components/ui/StatusBadge'
+import { useOrder } from '../store/hooks'
+import { formatCurrency } from '../utils/formatCurrency'
 
 // Abstract, brand-token-only success treatment for the checkout confirmation.
 // The Figma reference (`16192:27242` / `16209:35828`) is from a cosmetics
@@ -11,24 +14,44 @@ import Button from '../components/ui/Button'
 // mirroring the flat treatment already used in AuthHeroPanel and the
 // placeholder product SVGs. Copy is rewritten for a spare-parts order instead
 // of "your skincare is on its way".
-function SuccessCheckIcon() {
+function SuccessCheckIcon({ pending }) {
   return (
     <div className="relative flex size-20 items-center justify-center lg:size-[140px]">
       <span className="absolute inset-0 rounded-full border border-primary-700/40" />
       <span className="absolute inset-2 rounded-full border border-primary-700/30 lg:inset-4" />
-      <span className="flex size-14 items-center justify-center rounded-full bg-primary-800 lg:size-24">
-        <svg
-          viewBox="0 0 24 24"
-          className="size-7 text-primary-200 lg:size-10"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2.5}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M4 12.5l5 5L20 6" />
-        </svg>
+      <span
+        className={`flex size-14 items-center justify-center rounded-full lg:size-24 ${
+          pending ? 'bg-warning' : 'bg-primary-800'
+        }`}
+      >
+        {pending ? (
+          <svg
+            viewBox="0 0 24 24"
+            className="size-7 text-neutral-0 lg:size-10"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3.5 2" />
+          </svg>
+        ) : (
+          <svg
+            viewBox="0 0 24 24"
+            className="size-7 text-primary-200 lg:size-10"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M4 12.5l5 5L20 6" />
+          </svg>
+        )}
       </span>
     </div>
   )
@@ -53,38 +76,64 @@ function OrderIcon() {
   )
 }
 
+const HEADLINE = {
+  'Menunggu pembayaran': {
+    title: 'Menunggu Pembayaran',
+    description:
+      'Pesanan Anda telah dibuat, namun pembayaran belum kami terima. Segera selesaikan pembayaran agar pesanan dapat diproses.',
+  },
+  default: {
+    title: 'Pesanan Berhasil Dibuat',
+    description:
+      'Terima kasih telah berbelanja! Pesanan Anda sedang kami proses dan kabar terbaru akan dikirim lewat email.',
+  },
+}
+
 export default function CheckoutSuccessPage() {
   const location = useLocation()
   const navigate = useNavigate()
-  const orderNumber = location.state?.orderNumber
+  const [searchParams] = useSearchParams()
 
-  // Guard against landing on this route without a real order (e.g. pasting
-  // the URL directly). Navigating during render would be a side effect in
-  // the render phase, so it's deferred to an effect instead.
-  useEffect(() => {
-    if (!orderNumber) {
-      navigate('/', { replace: true })
-    }
-  }, [orderNumber, navigate])
+  const orderId = location.state?.orderId || location.state?.orderNumber || searchParams.get('order')
+  const order = useOrder(orderId)
 
-  if (!orderNumber) {
-    return null
+  if (!order) {
+    return (
+      <div>
+        <Nav />
+        <section className="px-4 py-10 lg:px-16 lg:py-20">
+          <EmptyState
+            title="Pesanan tidak ditemukan"
+            description="Kami tidak dapat menemukan detail pesanan ini. Order ID mungkin salah atau sudah kedaluwarsa."
+            actionLabel="Kembali ke Beranda"
+            onAction={() => navigate('/')}
+          />
+        </section>
+        <Footer />
+      </div>
+    )
   }
+
+  const isPending = order.status === 'Menunggu pembayaran'
+  const headline = HEADLINE[order.status] || HEADLINE.default
+  const address = order.address || {}
+  const isGuest = !order.userId
 
   return (
     <div>
       <Nav />
       <section className="flex justify-center px-4 py-10 lg:px-16 lg:py-20">
-        <div className="flex w-full max-w-[504px] flex-col items-center gap-8 rounded-2xl bg-primary-900 p-6 text-center lg:gap-10 lg:p-14">
+        <div className="flex w-full max-w-[560px] flex-col items-center gap-8 rounded-2xl bg-primary-900 p-6 text-center lg:gap-10 lg:p-14">
           <div className="flex flex-col items-center gap-6 lg:gap-8">
-            <SuccessCheckIcon />
-            <div className="flex flex-col items-center gap-2">
+            <SuccessCheckIcon pending={isPending} />
+            <div className="flex flex-col items-center gap-3">
               <h1 className="text-2xl font-medium tracking-[-0.48px] text-neutral-0 lg:text-[32px] lg:tracking-[-0.64px]">
-                Pesanan Berhasil Dibuat
+                {headline.title}
               </h1>
-              <p className="max-w-[320px] text-sm leading-relaxed tracking-[-0.28px] text-neutral-200 lg:max-w-[328px] lg:text-base">
-                Terima kasih telah berbelanja! Pesanan Anda sedang kami proses dan kabar terbaru akan dikirim lewat email.
+              <p className="max-w-[360px] text-sm leading-relaxed tracking-[-0.28px] text-neutral-200 lg:max-w-[400px] lg:text-base">
+                {headline.description}
               </p>
+              <StatusBadge status={order.status} />
             </div>
           </div>
 
@@ -94,17 +143,53 @@ export default function CheckoutSuccessPage() {
                 <OrderIcon />
               </span>
               <div className="flex flex-col gap-0.5">
-                <p className="text-sm font-medium tracking-[-0.28px] text-neutral-0 lg:text-base">
-                  Nomor Pesanan
-                </p>
+                <p className="text-sm font-medium tracking-[-0.28px] text-neutral-0 lg:text-base">Order ID</p>
                 <p className="font-mono text-sm font-medium tracking-[-0.28px] text-primary-200 lg:text-base">
-                  {orderNumber}
+                  {order.id}
                 </p>
               </div>
             </div>
-            <div className="p-4 text-left text-sm tracking-[-0.28px] text-neutral-200">
-              Estimasi tiba dalam 2–4 hari kerja setelah pesanan diproses.
+
+            <div className="flex flex-col gap-2 border-b border-primary-800 p-4 text-left">
+              {order.items.map((item) => (
+                <div key={item.productId} className="flex items-center justify-between gap-3 text-sm">
+                  <span className="text-neutral-200">
+                    {item.name} <span className="text-neutral-400">× {item.qty}</span>
+                  </span>
+                  <span className="shrink-0 text-neutral-0">{formatCurrency(item.price * item.qty)}</span>
+                </div>
+              ))}
+              <div className="mt-2 flex items-center justify-between border-t border-primary-800 pt-2 text-sm font-medium">
+                <span className="text-neutral-0">Total</span>
+                <span className="text-primary-200">{formatCurrency(order.total)}</span>
+              </div>
             </div>
+
+            <div className="flex flex-col gap-1 border-b border-primary-800 p-4 text-left text-sm">
+              <p className="font-medium text-neutral-0">Pengiriman</p>
+              <p className="text-neutral-200">
+                {order.shipping?.courier} · {order.shipping?.service}
+              </p>
+              {order.shipping?.etaLabel && <p className="text-neutral-400">{order.shipping.etaLabel}</p>}
+            </div>
+
+            <div className="flex flex-col gap-1 p-4 text-left text-sm">
+              <p className="font-medium text-neutral-0">Penerima</p>
+              <p className="text-neutral-200">{order.contact?.name}</p>
+              <p className="text-neutral-400">
+                {address.recipientName}
+                {address.phone ? ` · ${address.phone}` : ''}
+              </p>
+              <p className="text-neutral-400">
+                {[address.line, address.city, address.province, address.postalCode].filter(Boolean).join(', ')}
+              </p>
+            </div>
+          </div>
+
+          <div className="w-full rounded-xl bg-neutral-0/10 p-3 text-left text-xs leading-relaxed tracking-[-0.24px] text-neutral-200 lg:text-sm">
+            {isGuest
+              ? 'Simpan Order ID Anda untuk melacak pesanan dengan Order ID + email/nomor HP di halaman Lacak Pesanan.'
+              : 'Pesanan ini akan muncul di profil Anda.'}
           </div>
 
           <div className="flex w-full flex-col-reverse gap-3 lg:flex-row lg:justify-between">
@@ -118,7 +203,7 @@ export default function CheckoutSuccessPage() {
             </Link>
             <Link to="/search" className="lg:w-auto">
               <Button variant="primary" className="w-full !bg-neutral-0 !text-primary-900 hover:!bg-neutral-50">
-                Belanja Lagi
+                Lanjut Belanja
               </Button>
             </Link>
           </div>
