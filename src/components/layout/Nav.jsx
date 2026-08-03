@@ -17,6 +17,7 @@ export default function Nav() {
       <nav className="hidden lg:flex items-center gap-6 text-xs font-medium uppercase tracking-[0.24px] text-neutral-900">
         <Link to="/">Home</Link>
         <Link to="/search">Cari Produk</Link>
+        <Link to="/lacak">Lacak Pesanan</Link>
       </nav>
       <div className="flex items-center gap-4">
         <Link to="/search" aria-label="Cari" className="flex items-center justify-center size-5">
