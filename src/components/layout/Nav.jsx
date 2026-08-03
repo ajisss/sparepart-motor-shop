@@ -32,15 +32,20 @@ export default function Nav() {
           )}
         </Link>
         {isLoggedIn ? (
-          <button
-            onClick={() => {
-              logout()
-              navigate('/login')
-            }}
-            className="text-sm text-neutral-600"
-          >
-            Logout
-          </button>
+          <>
+            <Link to="/akun" className="text-sm text-neutral-600">
+              Akun
+            </Link>
+            <button
+              onClick={() => {
+                logout()
+                navigate('/login')
+              }}
+              className="text-sm text-neutral-600"
+            >
+              Logout
+            </button>
+          </>
         ) : (
           <Link to="/login" className="text-sm text-neutral-600">
             Login
