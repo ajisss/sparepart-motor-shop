@@ -9,6 +9,7 @@ import { useStore } from '../store/StoreProvider'
 import { computeTotals, validatePromo } from '../utils/checkout'
 import OrderSummary from '../components/checkout/OrderSummary'
 import Stepper from '../components/checkout/Stepper'
+import PaymentModal from '../components/checkout/PaymentModal'
 import IdentityStep from './checkout/IdentityStep'
 import AddressStep from './checkout/ShippingStep'
 import DeliveryStep from './checkout/DeliveryStep'
@@ -62,6 +63,7 @@ export default function CheckoutPage() {
   const [data, setData] = useState(() => buildInitialData(isLoggedIn ? currentUser : null))
   const [step, setStep] = useState(() => (isLoggedIn ? 'alamat' : 'identitas'))
   const [promoError, setPromoError] = useState('')
+  const [payOpen, setPayOpen] = useState(false)
 
   // Guard against landing on /checkout with an empty cart, but only on mount —
   // this must not react to clearCart() being called as part of confirming an
@@ -110,6 +112,7 @@ export default function CheckoutPage() {
   }
 
   const handlePlaceOrder = (paymentStatus, status) => {
+    setPayOpen(false)
     const shippingCost = data.shipping?.cost || 0
     const discount = data.promo?.discount || 0
     const orderItems = items.map((i) => {
@@ -139,6 +142,15 @@ export default function CheckoutPage() {
     })
     clearCart()
     navigate('/checkout/success', { state: { orderId: order.id, orderNumber: order.id } })
+  }
+
+  const handlePaymentResult = (outcome) => {
+    if (outcome === 'paid') {
+      handlePlaceOrder('paid', 'Sedang diproses')
+    } else if (outcome === 'pending') {
+      handlePlaceOrder('pending', 'Menunggu pembayaran')
+    }
+    // 'failed': modal stays open and shows its own inline error; no order is created.
   }
 
   if (items.length === 0) {
@@ -174,7 +186,7 @@ export default function CheckoutPage() {
             <ReviewStep
               data={data}
               onBack={goBack}
-              onPay={() => handlePlaceOrder('paid', 'Sedang diproses')}
+              onPay={() => setPayOpen(true)}
               promoApplied={data.promo}
               onApplyPromo={handleApplyPromo}
               onRemovePromo={handleRemovePromo}
@@ -193,6 +205,12 @@ export default function CheckoutPage() {
           />
         </aside>
       </section>
+      <PaymentModal
+        open={payOpen}
+        total={total}
+        onClose={() => setPayOpen(false)}
+        onResult={handlePaymentResult}
+      />
       <Footer />
     </div>
   )
