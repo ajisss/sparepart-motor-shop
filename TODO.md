@@ -14,16 +14,13 @@ PRD: `~/DMB POS/figma-cli/prd.md`. Detail spec & plan tiap sub-proyek ada di
   Cart data-driven, checkout wizard (identitas guest/login+Google di checkout →
   alamat → ekspedisi→paket → promo → **Midtrans Snap simulasi** 3-outcome) →
   halaman sukses baca order asli. Terverifikasi end-to-end di browser.
+- [x] **SP3 — Lacak pesanan & profil/riwayat customer** — halaman **Lacak
+  Pesanan** (tamu: Order ID + email/HP), **/akun** (tab Profil/Alamat/Riwayat
+  read-only), **/pesanan/:id** (detail + timeline `statusHistory` + blok resi
+  `tracking`) dengan gate akses pemilik/tamu-terverifikasi. Seed order demo
+  ditambah. Terverifikasi end-to-end di browser.
 
 ## Sisa sub-proyek (urut)
-
-### SP3 — Lacak pesanan & profil/riwayat customer
-- Halaman **Lacak Pesanan** buat tamu: input Order ID + email/HP → tampilkan status.
-- **Profil customer** (login): data diri, alamat tersimpan, **riwayat order**.
-- Tampilan **6 status** + timeline (`statusHistory`) + info resi kalau ada
-  (`order.tracking`).
-- Konsumsi field order yang udah spec-compliant: `shippingAddress`, `contact`,
-  `status`, `statusHistory`, `tracking` (default `null`).
 
 ### SP4 — Admin workspace shell + Dashboard
 - Layout/nav admin + gate role Owner/Admin.
@@ -67,3 +64,7 @@ npm run lint     # oxlint (ada 1 warning yang disengaja: param `password` di Aut
 Demo: akun seed `budi@dmb.com` (punya alamat default) & `sari@dmb.com` (belum),
 password apa aja diterima. Kode promo: `DMB10`, `ONGKIR`, `HEMAT50K`. Reset data
 demo dari console browser: `window.__dmbReset()`.
+
+Order demo: login `budi@dmb.com` lalu buka **Akun → Riwayat** (3 order). Lacak
+pesanan tamu: Order ID `ORD-6T1N8K3E` + email `andi.pratama@gmail.com` (atau HP
+`081377788899`).
