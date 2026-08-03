@@ -67,7 +67,7 @@ export default function ReviewStep({ data, onBack, onConfirm }) {
           {rows.map(({ productId, qty, product }) => (
             <div key={productId} className="flex gap-3">
               <img
-                src={product.image}
+                src={product.images?.[0]}
                 alt={product.name}
                 className="size-14 shrink-0 rounded-xl bg-neutral-50 object-cover"
               />

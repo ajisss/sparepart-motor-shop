@@ -21,6 +21,10 @@ export default function RegisterPage() {
 
   function handleSubmit(e) {
     e.preventDefault()
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setError('Semua field wajib diisi.')
+      return
+    }
     const res = register({ name, email, password })
     if (res.ok) {
       navigate('/')

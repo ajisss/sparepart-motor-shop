@@ -77,7 +77,7 @@ export default function HomePage() {
                 className="relative w-40 shrink-0 overflow-hidden rounded-md bg-neutral-0/95 shadow-lg lg:w-72"
               >
                 <div className="aspect-square w-full bg-neutral-100">
-                  <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                  <img src={product.images?.[0]} alt={product.name} className="h-full w-full object-cover" />
                 </div>
                 <span className="absolute left-3 top-3 rounded-pill bg-primary-200 px-3 py-1 text-xs font-medium uppercase tracking-[0.18px] text-primary-900">
                   {badge}

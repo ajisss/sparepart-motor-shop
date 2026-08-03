@@ -10,7 +10,7 @@ export default function ProductCard({ product }) {
     >
       <div className="aspect-square w-full overflow-hidden rounded-md bg-neutral-100">
         <img
-          src={product.image}
+          src={product.images?.[0]}
           alt={product.name}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
         />

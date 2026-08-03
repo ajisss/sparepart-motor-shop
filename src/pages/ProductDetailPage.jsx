@@ -34,7 +34,7 @@ export default function ProductDetailPage() {
   if (!product) return null
 
   const category = CATEGORIES.find((c) => c.id === product.category)
-  const thumbnails = [product.image, product.image, product.image, product.image]
+  const thumbnails = [product.images?.[0], product.images?.[0], product.images?.[0], product.images?.[0]]
 
   const handleAddToCart = () => {
     addItem(product.id, qty)

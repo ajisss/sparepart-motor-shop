@@ -58,7 +58,7 @@ export default function CartPage() {
                   className="flex gap-4 rounded-2xl border border-neutral-100 p-4"
                 >
                   <img
-                    src={product.image}
+                    src={product.images?.[0]}
                     alt={product.name}
                     className="size-20 shrink-0 rounded-xl bg-neutral-50 object-cover"
                   />

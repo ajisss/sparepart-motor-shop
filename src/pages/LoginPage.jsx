@@ -21,6 +21,10 @@ export default function LoginPage() {
 
   function handleSubmit(e) {
     e.preventDefault()
+    if (!email.trim() || !password.trim()) {
+      setError('Email dan password wajib diisi.')
+      return
+    }
     const res = login(email, password)
     if (res.ok) {
       navigate('/')
