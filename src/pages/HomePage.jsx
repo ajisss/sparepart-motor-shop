@@ -1,30 +1,33 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Nav from '../components/layout/Nav'
 import Footer from '../components/layout/Footer'
 import CategoryChip from '../components/ui/CategoryChip'
 import ProductCard from '../components/ui/ProductCard'
 import Button from '../components/ui/Button'
-import { CATEGORIES } from '../data/categories'
-import { PRODUCTS } from '../data/products'
-
-// Hero "floating cards" mirror the Figma reference's composition (stacked
-// preview cards with a pill badge, offset to the side of the headline) but
-// use this project's own product placeholder art instead of the Figma
-// file's skincare photography, which doesn't belong on a motorcycle
-// spare parts shop.
-const HERO_HIGHLIGHTS = [
-  { product: PRODUCTS.find((p) => p.id === 'p1'), badge: 'Terlaris' },
-  { product: PRODUCTS.find((p) => p.id === 'p2'), badge: 'Favorit' },
-  { product: PRODUCTS.find((p) => p.id === 'p5'), badge: 'Baru' },
-]
+import { useHomepage, useProducts, useCategories } from '../store/hooks'
 
 export default function HomePage() {
-  const [activeCategory, setActiveCategory] = useState(null)
+  const homepage = useHomepage()
+  const products = useProducts()
+  const categories = useCategories()
 
-  const filtered = activeCategory
-    ? PRODUCTS.filter((p) => p.category === activeCategory)
-    : PRODUCTS
+  const publishedProducts = products.filter((p) => p.published)
+
+  const activeBanners = [...homepage.banners]
+    .filter((b) => b.active)
+    .sort((a, b) => a.order - b.order)
+  const banner = activeBanners[0]
+
+  const featured = homepage.featuredProductIds
+    .map((id) => publishedProducts.find((p) => p.id === id))
+    .filter(Boolean)
+
+  const headline = banner?.headline ?? 'Sparepart motor original untuk performa maksimal'
+  const subtext =
+    banner?.subtext ??
+    'Dari mesin, kelistrikan, sampai body & aksesoris — semua kebutuhan sparepart motor Anda ada di sini, lengkap dengan garansi keaslian.'
+  const ctaHref = banner?.ctaHref ?? '/search'
+  const ctaLabel = banner?.ctaLabel ?? 'Belanja Sekarang'
 
   return (
     <div>
@@ -49,15 +52,12 @@ export default function HomePage() {
               <span className="text-sm text-neutral-0">Sparepart original, siap kirim hari ini</span>
             </div>
             <h1 className="max-w-xl text-3xl font-medium leading-tight tracking-tight text-neutral-0 lg:text-5xl">
-              Sparepart motor original untuk performa maksimal
+              {headline}
             </h1>
-            <p className="max-w-md text-neutral-200">
-              Dari mesin, kelistrikan, sampai body & aksesoris — semua kebutuhan sparepart motor Anda
-              ada di sini, lengkap dengan garansi keaslian.
-            </p>
+            <p className="max-w-md text-neutral-200">{subtext}</p>
             <div className="flex flex-wrap items-center gap-3">
-              <Link to="/search">
-                <Button variant="primary">Belanja Sekarang</Button>
+              <Link to={ctaHref}>
+                <Button variant="primary">{ctaLabel}</Button>
               </Link>
               <a href="#kategori">
                 <Button
@@ -70,41 +70,53 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="flex w-full flex-1 justify-start gap-4 overflow-x-auto pb-2 lg:w-auto lg:flex-col lg:overflow-visible lg:pb-0">
-            {HERO_HIGHLIGHTS.map(({ product, badge }) => (
-              <div
-                key={product.id}
-                className="relative w-40 shrink-0 overflow-hidden rounded-md bg-neutral-0/95 shadow-lg lg:w-72"
-              >
+          {banner?.image && (
+            <div className="flex w-full flex-1 justify-start gap-4 overflow-x-auto pb-2 lg:w-auto lg:flex-col lg:overflow-visible lg:pb-0">
+              <div className="relative w-64 shrink-0 overflow-hidden rounded-md bg-neutral-0/95 shadow-lg lg:w-96">
                 <div className="aspect-square w-full bg-neutral-100">
-                  <img src={product.images?.[0]} alt={product.name} className="h-full w-full object-cover" />
+                  <img src={banner.image} alt={headline} className="h-full w-full object-cover" />
                 </div>
-                <span className="absolute left-3 top-3 rounded-pill bg-primary-200 px-3 py-1 text-xs font-medium uppercase tracking-[0.18px] text-primary-900">
-                  {badge}
-                </span>
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
       <section id="kategori" className="flex gap-3 overflow-x-auto px-4 py-8 lg:px-16">
-        <CategoryChip label="Semua" active={!activeCategory} onClick={() => setActiveCategory(null)} />
-        {CATEGORIES.map((c) => (
-          <CategoryChip
-            key={c.id}
-            label={c.name}
-            active={activeCategory === c.id}
-            onClick={() => setActiveCategory(c.id)}
-          />
+        <Link to="/search">
+          <CategoryChip label="Semua" />
+        </Link>
+        {categories.map((c) => (
+          <Link key={c.id} to={`/search?category=${c.id}`}>
+            <CategoryChip label={c.name} />
+          </Link>
         ))}
       </section>
 
       <section className="px-4 py-8 lg:px-16">
-        <h2 className="mb-4 text-xl font-semibold text-neutral-900">Produk Pilihan</h2>
+        <h2 className="mb-4 text-xl font-semibold text-neutral-900">Produk Terbaru</h2>
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {filtered.map((p) => (
+          {featured.map((p) => (
             <ProductCard key={p.id} product={p} />
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-neutral-25 px-4 py-8 lg:px-16">
+        <h2 className="mb-4 text-xl font-semibold text-neutral-900">Apa Kata Pelanggan</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {homepage.testimonials.map((t) => (
+            <div
+              key={t.id}
+              className="flex flex-col gap-3 rounded-md border border-neutral-100 bg-neutral-0 p-5 shadow-sm"
+            >
+              <span aria-hidden="true" className="text-primary-800 text-sm leading-none">
+                {'★'.repeat(t.rating)}
+                {'☆'.repeat(Math.max(0, 5 - t.rating))}
+              </span>
+              <p className="text-sm text-neutral-800">{t.text}</p>
+              <span className="text-sm font-medium text-neutral-900">{t.author}</span>
+            </div>
           ))}
         </div>
       </section>
