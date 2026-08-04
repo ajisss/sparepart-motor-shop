@@ -1,6 +1,6 @@
 # Chat Inbox Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Add a customer-facing chat inbox icon to the storefront header that lets logged-in customers message the store, synced two-way with the existing admin `ChatsPage`.
 
@@ -39,7 +39,7 @@
   - `lastMessage(conversation: object): object | null`
   - `buildSeedConversations(): object` (from `src/data/chats.js`) — the initial `dmb:chats` shape
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `tests/chat-store.test.js`:
 
@@ -172,12 +172,12 @@ test('buildSeedConversations returns the 8 mock contacts with the new schema', (
 })
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `node --test tests/chat-store.test.js`
 Expected: FAIL — `Cannot find module '../src/lib/chatStore.js'` (module doesn't exist yet)
 
-- [ ] **Step 3: Implement `src/lib/chatStore.js`**
+- [x] **Step 3: Implement `src/lib/chatStore.js`**
 
 ```js
 const AVATAR_PALETTE = ['#71717A', '#16a34a', '#e07b54', '#7c3aed', '#374151', '#be185d', '#1d4ed8', '#9f1239']
@@ -263,7 +263,7 @@ export function lastMessage(conversation) {
 }
 ```
 
-- [ ] **Step 4: Implement `src/data/chats.js`**
+- [x] **Step 4: Implement `src/data/chats.js`**
 
 This carries over the 8 mock contacts currently hardcoded in `src/pages/admin/ChatsPage.jsx` (the `CONTACTS` array), reshaped into the new schema: `unread` → `unreadForAdmin`, `preview`/top-level `time` dropped (both are derived from the last message via `lastMessage()`), each message gains a stable string `id`.
 
@@ -371,17 +371,17 @@ export function buildSeedConversations() {
 }
 ```
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 Run: `node --test tests/chat-store.test.js`
 Expected: PASS, all 10 tests green
 
-- [ ] **Step 6: Run the full test suite to check nothing else broke**
+- [x] **Step 6: Run the full test suite to check nothing else broke**
 
 Run: `npm test`
 Expected: PASS, including the pre-existing `product-assets.test.js` and `section-banners.test.js`
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/lib/chatStore.js src/data/chats.js tests/chat-store.test.js
@@ -409,7 +409,7 @@ git commit -m "feat: add pure chat store logic and seed conversations"
     - `markReadBy(conversationId: string, by: 'admin' | 'customer'): void`
     - `lastMessage: (conversation: object) => object | null` (re-exported from `chatStore.js` for convenience in list rendering)
 
-- [ ] **Step 1: Implement `src/context/ChatContext.jsx`**
+- [x] **Step 1: Implement `src/context/ChatContext.jsx`**
 
 ```jsx
 import { createContext, useContext, useEffect, useState } from 'react'
@@ -493,7 +493,7 @@ export function useChat() {
 }
 ```
 
-- [ ] **Step 2: Wire `ChatProvider` into `App.jsx`**
+- [x] **Step 2: Wire `ChatProvider` into `App.jsx`**
 
 In `src/App.jsx`, add the import next to the other context imports:
 
@@ -517,12 +517,12 @@ Then nest it between `AuthProvider` and `CartProvider` (it needs `useAuth()`, an
       </StoreProvider>
 ```
 
-- [ ] **Step 3: Verify the app still builds**
+- [x] **Step 3: Verify the app still builds**
 
 Run: `npm run build`
 Expected: build succeeds with no new errors (Task 3/4 haven't consumed `useChat()` yet, so this only proves the provider tree is valid)
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/context/ChatContext.jsx src/App.jsx
@@ -539,7 +539,7 @@ git commit -m "feat: add ChatContext and wire it into the app"
 **Interfaces:**
 - Consumes: `useChat()` from Task 2 (`myConversation`, `myUnread`, `sendAsCustomer`, `markReadBy`); `useAuth()`'s existing `isLoggedIn`; `ChatCircleText`, `PaperPlaneTilt` from `@phosphor-icons/react`.
 
-- [ ] **Step 1: Add imports and new state**
+- [x] **Step 1: Add imports and new state**
 
 In `src/components/layout/Nav.jsx`, add to the top imports:
 
@@ -557,7 +557,7 @@ Inside `Nav()`, alongside the existing `cartOpen`/`cartRef` state (after `const 
   const inboxRef = useRef(null)
 ```
 
-- [ ] **Step 2: Close the inbox dropdown on outside click, Escape, and route change**
+- [x] **Step 2: Close the inbox dropdown on outside click, Escape, and route change**
 
 Add a new effect mirroring the existing mini-cart one (place it right after the mini-cart's outside-click effect, before the "Close the mini-cart whenever the route changes" effect):
 
@@ -588,7 +588,7 @@ Change the existing route-change effect to also close the inbox:
   }, [location.pathname])
 ```
 
-- [ ] **Step 3: Mark the customer's messages read when the dropdown opens**
+- [x] **Step 3: Mark the customer's messages read when the dropdown opens**
 
 Add another small effect near the others:
 
@@ -601,7 +601,7 @@ Add another small effect near the others:
   }, [inboxOpen])
 ```
 
-- [ ] **Step 4: Add a `handleSendInbox` helper**
+- [x] **Step 4: Add a `handleSendInbox` helper**
 
 Place this near the top of the component body, alongside the other derived values (e.g. after `recentItems`):
 
@@ -613,7 +613,7 @@ Place this near the top of the component body, alongside the other derived value
   }
 ```
 
-- [ ] **Step 5: Add the inbox icon + dropdown JSX**
+- [x] **Step 5: Add the inbox icon + dropdown JSX**
 
 In the render, insert this block right after the closing `</div>` of the "Cart + mini-cart popup" `<div className="relative" ref={cartRef}>...</div>` block, and before the `{isLoggedIn ? (...) : (...)}` Akun/Login block:
 
@@ -687,7 +687,7 @@ In the render, insert this block right after the closing `</div>` of the "Cart +
         </div>
 ```
 
-- [ ] **Step 6: Manual verification**
+- [x] **Step 6: Manual verification**
 
 Run: `npm run dev`, open `http://localhost:5173/`
 
@@ -697,7 +697,7 @@ Run: `npm run dev`, open `http://localhost:5173/`
 4. Click outside the dropdown → confirm it closes. Reopen it → confirm the message persisted.
 5. Refresh the page → confirm the message is still there (persisted via `localStorage`).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/components/layout/Nav.jsx
@@ -714,7 +714,7 @@ git commit -m "feat: add customer inbox icon and chat dropdown to the header"
 **Interfaces:**
 - Consumes: `useChat()` from Task 2 (`conversationList`, `sendAsAdmin`, `markReadBy`, `lastMessage`).
 
-- [ ] **Step 1: Replace the local mock data and state with `ChatContext`**
+- [x] **Step 1: Replace the local mock data and state with `ChatContext`**
 
 In `src/pages/admin/ChatsPage.jsx`, delete the entire hardcoded `CONTACTS` array (lines 4–126) and the `import { useState } from 'react'` stays, but add:
 
@@ -771,7 +771,7 @@ export default function ChatsPage() {
   }
 ```
 
-- [ ] **Step 2: Update the conversation list rendering to use `lastMessage`/`unreadForAdmin`**
+- [x] **Step 2: Update the conversation list rendering to use `lastMessage`/`unreadForAdmin`**
 
 Replace the list `<button onClick={() => setActiveId(c.id)} ...>` (inside the `{chats.map((c) => (...))}` block) so it calls `selectConversation` and derives preview/time/unread from the new schema:
 
@@ -800,7 +800,7 @@ Replace the list `<button onClick={() => setActiveId(c.id)} ...>` (inside the `{
 
 (This replaces `activeId === c.id` → `activeConversationId === c.id`, `c.preview` → `lastMessage(c)?.text ?? ''`, `c.time` → `lastMessage(c)?.time ?? ''`, and `c.unread` → `c.unreadForAdmin` in both the condition and the badge.)
 
-- [ ] **Step 3: Manual verification**
+- [x] **Step 3: Manual verification**
 
 With the dev server running (`npm run dev`), and Task 3 already merged:
 
@@ -811,7 +811,7 @@ With the dev server running (`npm run dev`), and Task 3 already merged:
 5. Reply as admin, confirm `send()` appends the reply.
 6. Switch back to the storefront tab, open the inbox dropdown again (may need to click elsewhere then reopen, or refresh) — confirm the admin's reply appears and the header badge shows the new unread count.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/pages/admin/ChatsPage.jsx
@@ -828,7 +828,7 @@ git commit -m "feat: sync admin ChatsPage with the shared ChatContext"
 **Interfaces:**
 - Consumes: `useChat()` from Task 2 (`adminUnreadTotal`).
 
-- [ ] **Step 1: Move `MENU` inside the component so it can read live data**
+- [x] **Step 1: Move `MENU` inside the component so it can read live data**
 
 In `src/components/admin/Sidebar.jsx`, add the import:
 
@@ -849,7 +849,7 @@ const MENU = [
 
 (Leave the `GENERAL` constant below it untouched — it stays module-level since it has no dynamic data.)
 
-- [ ] **Step 2: Rebuild `MENU` inside `Sidebar()` using live unread count**
+- [x] **Step 2: Rebuild `MENU` inside `Sidebar()` using live unread count**
 
 Change:
 
@@ -873,14 +873,14 @@ export default function Sidebar() {
   return (
 ```
 
-- [ ] **Step 3: Manual verification**
+- [x] **Step 3: Manual verification**
 
 With the dev server running and an admin session active on `/admin`:
 
 1. Confirm the sidebar "Chat" badge reflects the real total unread count from `ChatsPage` (matches the seeded mock contacts' unread counts on first load: 2+2+1+0+0+4+3+0 = 12).
 2. Open `/admin/chats`, click into every conversation with an unread badge to mark them read, confirm the sidebar badge count decreases accordingly and disappears entirely at 0.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/components/admin/Sidebar.jsx
@@ -893,22 +893,22 @@ git commit -m "feat: make the admin sidebar chat badge reflect live unread count
 
 **Files:** none (verification only)
 
-- [ ] **Step 1: Run the full automated test suite**
+- [x] **Step 1: Run the full automated test suite**
 
 Run: `npm test`
 Expected: PASS, all tests including `tests/chat-store.test.js`
 
-- [ ] **Step 2: Run lint**
+- [x] **Step 2: Run lint**
 
 Run: `npm run lint`
 Expected: no errors
 
-- [ ] **Step 3: Run production build**
+- [x] **Step 3: Run production build**
 
 Run: `npm run build`
 Expected: build succeeds
 
-- [ ] **Step 4: End-to-end manual walkthrough in the browser**
+- [x] **Step 4: End-to-end manual walkthrough in the browser**
 
 With `npm run dev` running:
 
@@ -920,6 +920,6 @@ With `npm run dev` running:
 6. Refresh both tabs → all messages and unread states persisted correctly.
 7. Confirm the pre-existing seeded conversations (Andi Pratama, James Carter, etc.) still render correctly in `/admin/chats` exactly as before this feature.
 
-- [ ] **Step 5: Final commit (only if any fixes were needed in this task)**
+- [x] **Step 5: Final commit (only if any fixes were needed in this task)**
 
 If steps 1–4 required no code changes, this task produces no commit — the feature is complete as of Task 5's commit.
