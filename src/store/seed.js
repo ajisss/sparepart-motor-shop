@@ -4,8 +4,9 @@ import { USERS } from '../data/users.js'
 import { PROMOS } from '../data/promos.js'
 import { SHIPPING } from '../data/shipping.js'
 import { HOMEPAGE } from '../data/homepage.js'
+import { ORDERS } from '../data/orders.js'
 
-export const VERSION = 1
+export const VERSION = 2
 const STORAGE_KEY = 'dmb:data'
 
 export function buildSeed() {
@@ -14,7 +15,7 @@ export function buildSeed() {
     products: PRODUCTS,
     categories: CATEGORIES,
     users: USERS,
-    orders: [],
+    orders: ORDERS,
     promos: PROMOS,
     shipping: SHIPPING,
     homepage: HOMEPAGE,
