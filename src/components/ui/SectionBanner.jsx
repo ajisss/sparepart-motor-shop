@@ -20,9 +20,9 @@ export default function SectionBanner({
       />
       <div
         aria-hidden="true"
-        className="absolute right-6 top-1/2 size-40 -translate-y-1/2 rounded-full bg-secondary-600 lg:right-16 lg:size-56"
+        className="absolute right-6 top-1/2 size-32 -translate-y-1/2 rounded-full bg-secondary-600 lg:right-16 lg:size-56"
       />
-      <div className="relative z-10 max-w-[65%] lg:max-w-xl">
+      <div className="relative z-10 max-w-[58%] lg:max-w-xl">
         <p className="text-xs font-medium uppercase tracking-[0.18em] text-secondary-600">
           {eyebrow} / {number}
         </p>
@@ -42,7 +42,7 @@ export default function SectionBanner({
       <img
         src={image}
         alt={imageAlt}
-        className="absolute bottom-[-8%] right-1 z-10 h-[72%] w-[42%] object-contain drop-shadow-2xl lg:right-8 lg:h-[88%]"
+        className="absolute bottom-[-8%] right-1 z-10 h-[72%] w-[38%] object-contain drop-shadow-2xl lg:right-8 lg:h-[88%] lg:w-[42%]"
       />
       <span
         aria-hidden="true"
