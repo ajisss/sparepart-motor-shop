@@ -75,12 +75,12 @@ export default function HomePage() {
   return (
     <div>
       {/* Announcement bar */}
-      <div className="bg-neutral-900 px-4 py-2.5 text-center text-xs font-medium tracking-wide text-neutral-0 lg:text-sm">
+      <div className="home-announcement flex min-h-[38px] items-center justify-center bg-neutral-900 px-4 py-2 text-center text-xs font-medium tracking-wide text-neutral-0 lg:text-sm">
         🔥 Promo Launch — Gratis ongkir untuk pembelian di atas Rp300.000. Pakai kode{' '}
         <span className="font-semibold text-secondary-600">ONGKIR</span>
       </div>
 
-      <Nav />
+      <Nav overlay />
 
       <HeroAssemblySection />
 

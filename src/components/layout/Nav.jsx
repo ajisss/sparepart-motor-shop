@@ -10,7 +10,7 @@ import searchIcon from '../../assets/nav/search-icon.svg'
 import cartIcon from '../../assets/nav/cart-icon.svg'
 import logo from '../../assets/logo-dmb.png'
 
-export default function Nav() {
+export default function Nav({ overlay = false }) {
   const { items, itemCount, subtotal } = useCart()
   const { isLoggedIn, logout } = useAuth()
   const { myConversation, myUnread, sendAsCustomer, markReadBy } = useChat()
@@ -96,13 +96,18 @@ export default function Nav() {
     setInboxInput('')
   }
 
-  const link = scrolled ? 'text-neutral-0' : 'text-neutral-900'
-  const subLink = scrolled ? 'text-neutral-300 hover:text-neutral-0' : 'text-neutral-600 hover:text-neutral-900'
+  const onDark = scrolled || overlay
+  const link = onDark ? 'text-neutral-0' : 'text-neutral-900'
+  const subLink = onDark ? 'text-neutral-300 hover:text-neutral-0' : 'text-neutral-600 hover:text-neutral-900'
 
   return (
     <header
       className={`sticky top-0 z-50 flex items-center justify-between border-b px-4 py-4 transition-colors duration-300 lg:px-16 ${
-        scrolled ? 'border-neutral-0/10 bg-neutral-900' : 'border-neutral-100 bg-neutral-0'
+        scrolled
+          ? 'border-neutral-0/10 bg-neutral-900'
+          : overlay && !scrolled
+            ? 'border-neutral-0/10 bg-transparent'
+            : 'border-neutral-100 bg-neutral-0'
       }`}
     >
       <Link to="/" aria-label="DMB Moto Shop — Beranda" className="flex items-center">
@@ -157,7 +162,7 @@ export default function Nav() {
 
       <div className="flex items-center gap-4">
         <Link to="/search" aria-label="Cari" className="flex size-5 items-center justify-center">
-          <img src={searchIcon} alt="" className={`size-full ${scrolled ? 'invert' : ''}`} />
+          <img src={searchIcon} alt="" className={`size-full ${onDark ? 'invert' : ''}`} />
         </Link>
 
         {/* Cart + mini-cart popup */}
@@ -169,7 +174,7 @@ export default function Nav() {
             onClick={() => setCartOpen((o) => !o)}
             className="relative flex size-5 items-center justify-center"
           >
-            <img src={cartIcon} alt="" className={`size-full ${scrolled ? 'invert' : ''}`} />
+            <img src={cartIcon} alt="" className={`size-full ${onDark ? 'invert' : ''}`} />
             {itemCount > 0 && (
               <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-secondary-600 text-xs font-semibold text-neutral-900">
                 {itemCount}

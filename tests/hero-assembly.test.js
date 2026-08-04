@@ -119,14 +119,17 @@ test('homepage renders the extracted hero and removes the savings starburst', ()
   const homepage = readFileSync(`${projectRoot}src/pages/HomePage.jsx`, 'utf8')
 
   assert.match(homepage, /<HeroAssemblySection\s*\/>/)
+  assert.match(homepage, /className="home-announcement/)
+  assert.match(homepage, /<Nav\s+overlay\s*\/>/)
   assert.doesNotMatch(homepage, /StarburstBadge/)
 })
 
 test('hero styles include approved timing, phone pruning, and reduced-motion completion', () => {
   const styles = readFileSync(`${projectRoot}src/index.css`, 'utf8')
 
-  assert.match(styles, /\.assembly-hero__surface\s*\{[^}]*min-height:\s*760px/s)
-  assert.match(styles, /min-height:\s*max\(680px,\s*calc\(100svh - 128px\)\)/)
+  assert.match(styles, /\.assembly-hero\s*\{[^}]*margin-top:\s*-72px/s)
+  assert.match(styles, /\.assembly-hero__surface\s*\{[^}]*min-height:\s*calc\(100svh - 38px\)/s)
+  assert.match(styles, /\.assembly-hero__surface\s*\{[^}]*border-radius:\s*0/s)
   assert.match(styles, /\.assembly-hero__desktop-only\s*\{[^}]*display:\s*none/s)
   assert.match(styles, /assembly-copy-in\s+600ms/)
   assert.match(styles, /assembly-bike-reveal\s+900ms/)
@@ -135,21 +138,52 @@ test('hero styles include approved timing, phone pruning, and reduced-motion com
   assert.match(styles, /assembly-signal-flow\s+8s/)
   assert.match(styles, /\.assembly-hero__endpoint\.is-ambient/)
   assert.match(styles, /prefers-reduced-motion:\s*reduce/)
+  assert.match(styles, /\.assembly-hero__bike-wrap\s*\{\s*transform:\s*translateX\(-50%\);\s*\}/)
   assert.match(styles, /\.assembly-hero__surface\.is-fallback/)
 })
 
-test('hero reserves separate copy and visual zones at narrow breakpoints', () => {
+test('hero reserves separate grid rows for copy and visual stage', () => {
   const styles = readFileSync(`${projectRoot}src/index.css`, 'utf8')
 
-  assert.match(styles, /\.assembly-hero__stage\s*\{[^}]*height:\s*300px/s)
-  assert.match(styles, /@media \(min-width:\s*640px\)[\s\S]*\.assembly-hero__stage\s*\{\s*height:\s*430px;/)
+  assert.match(styles, /\.assembly-hero__surface\s*\{[^}]*display:\s*grid/s)
+  assert.match(styles, /\.assembly-hero__surface\s*\{[^}]*grid-template-rows:\s*auto minmax\(260px,\s*1fr\)/s)
+  assert.match(styles, /\.assembly-hero__stage\s*\{[^}]*position:\s*relative/s)
+  assert.doesNotMatch(styles, /\.assembly-hero__stage\s*\{[^}]*position:\s*absolute/s)
+  assert.match(styles, /\.assembly-hero__bike-wrap\s*\{[^}]*height:\s*100%/s)
   assert.match(styles, /\.assembly-part--battery\s*\{\s*top:\s*62px;/)
   assert.match(styles, /\.assembly-part--ignition\s*\{\s*top:\s*80px;/)
 })
 
-test('desktop hero keeps the full motorcycle below the copy zone', () => {
+test('desktop hero overlays its nav without reintroducing page gutters', () => {
+  const component = readFileSync(componentPath, 'utf8')
+  const styles = readFileSync(`${projectRoot}src/index.css`, 'utf8')
+  const nav = readFileSync(`${projectRoot}src/components/layout/Nav.jsx`, 'utf8')
+
+  assert.match(component, /<section className="assembly-hero">/)
+  assert.doesNotMatch(component, /assembly-hero px-4/)
+  assert.doesNotMatch(component, /max-w-7xl/)
+  assert.match(styles, /@media \(min-width:\s*1024px\)[\s\S]*\.assembly-hero\s*\{\s*margin-top:\s*-80px;/)
+  assert.match(nav, /export default function Nav\(\{ overlay = false \}\)/)
+  assert.match(nav, /overlay && !scrolled/)
+})
+
+test('short desktop viewport compacts copy so the full assembly stays on screen', () => {
   const styles = readFileSync(`${projectRoot}src/index.css`, 'utf8')
 
-  assert.match(styles, /\.assembly-hero__copy\s*\{\s*padding-top:\s*clamp\(3rem,\s*5vh,\s*4rem\);\s*gap:\s*1rem;/)
-  assert.match(styles, /\.assembly-hero__bike-wrap\s*\{\s*bottom:\s*-20px;\s*width:\s*68%;/)
+  assert.match(styles, /@media \(min-width:\s*1024px\) and \(max-height:\s*800px\)/)
+  assert.match(styles, /max-height:\s*800px[\s\S]*\.assembly-hero__surface\s*\{[^}]*height:\s*calc\(100svh - 38px\)/s)
+  assert.match(styles, /max-height:\s*800px[\s\S]*\.assembly-hero__stage\s*\{[^}]*min-height:\s*0/s)
+  assert.match(styles, /max-height:\s*800px[\s\S]*\.assembly-hero__copy h1\s*\{[^}]*font-size:\s*3\.25rem/s)
+})
+
+test('desktop callout cards orbit close to the motorcycle and connector starts', () => {
+  const component = readFileSync(componentPath, 'utf8')
+  const styles = readFileSync(`${projectRoot}src/index.css`, 'utf8')
+
+  assert.match(styles, /\.assembly-part--battery\s*\{[^}]*left:\s*calc\(50% - min\(34vw,\s*560px\)\)/s)
+  assert.match(styles, /\.assembly-part--headlamp\s*\{[^}]*right:\s*calc\(50% - min\(34vw,\s*560px\)\)/s)
+  assert.match(styles, /\.assembly-part--brake\s*\{[^}]*left:\s*calc\(50% - min\(33vw,\s*540px\)\)/s)
+  assert.match(styles, /\.assembly-part--exhaust\s*\{[^}]*right:\s*calc\(50% - min\(33vw,\s*540px\)\)/s)
+  assert.match(component, /path: 'M290 108 C350 118 385 238 445 264'/)
+  assert.match(component, /path: 'M710 338 C665 351 625 332 564 306'/)
 })

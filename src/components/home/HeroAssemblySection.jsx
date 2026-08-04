@@ -11,11 +11,11 @@ const PARTS = [
 ]
 
 const CONNECTORS = [
-  { key: 'battery', path: 'M190 108 C305 118 330 238 445 264', target: [445, 264], phone: true },
-  { key: 'ignition', path: 'M390 76 C440 130 448 212 493 275', target: [493, 275], phone: false },
-  { key: 'headlamp', path: 'M812 108 C765 132 751 192 722 229', target: [722, 229], phone: true },
-  { key: 'brake', path: 'M170 334 C254 344 292 339 351 317', target: [351, 317], phone: true },
-  { key: 'exhaust', path: 'M828 338 C733 351 645 332 564 306', target: [564, 306], phone: false },
+  { key: 'battery', path: 'M290 108 C350 118 385 238 445 264', target: [445, 264], phone: true },
+  { key: 'ignition', path: 'M380 76 C430 130 448 212 493 275', target: [493, 275], phone: false },
+  { key: 'headlamp', path: 'M710 108 C740 132 740 192 722 229', target: [722, 229], phone: true },
+  { key: 'brake', path: 'M290 334 C315 344 330 339 351 317', target: [351, 317], phone: true },
+  { key: 'exhaust', path: 'M710 338 C665 351 625 332 564 306', target: [564, 306], phone: false },
 ]
 
 export default function HeroAssemblySection() {
@@ -28,8 +28,8 @@ export default function HeroAssemblySection() {
   const stateClass = `${ready ? 'is-ready' : ''} ${imageState === 'error' ? 'is-fallback' : ''}`
 
   return (
-    <section className="assembly-hero px-4 pt-6 lg:px-16 lg:pt-8">
-      <div className={`assembly-hero__surface mx-auto max-w-7xl ${stateClass}`}>
+    <section className="assembly-hero">
+      <div className={`assembly-hero__surface ${stateClass}`}>
         <div className="assembly-hero__copy">
           <span className="inline-flex items-center gap-2 rounded-pill border border-neutral-0/20 bg-neutral-0/10 px-3 py-1.5 text-sm text-neutral-0 backdrop-blur">
             <span aria-hidden="true" className="size-1.5 rounded-full bg-secondary-600" />
