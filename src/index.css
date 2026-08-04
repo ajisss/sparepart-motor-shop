@@ -139,3 +139,289 @@
   60% { opacity: 1; transform: scale(1.45); }
   100% { opacity: 1; transform: scale(1); }
 }
+
+@layer components {
+  .assembly-hero__surface {
+    position: relative;
+    min-height: 760px;
+    overflow: hidden;
+    border-radius: 1rem;
+    background:
+      radial-gradient(circle at 76% 14%, rgb(254 201 1 / 0.13), transparent 34%),
+      radial-gradient(circle at 14% 88%, rgb(254 201 1 / 0.07), transparent 38%),
+      #171717;
+    isolation: isolate;
+  }
+
+  .assembly-hero__surface::before {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.028) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.028) 1px, transparent 1px);
+    background-size: 42px 42px;
+    content: '';
+    mask-image: linear-gradient(to bottom, transparent 8%, black 56%, transparent 100%);
+  }
+
+  .assembly-hero__copy {
+    position: relative;
+    z-index: 20;
+    display: flex;
+    max-width: 48rem;
+    margin-inline: auto;
+    padding: 3rem 1.5rem 0;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.15rem;
+    text-align: center;
+  }
+
+  .assembly-hero__stage {
+    position: absolute;
+    inset: auto 0 0;
+    height: 430px;
+  }
+
+  .assembly-hero__bike-wrap {
+    position: absolute;
+    z-index: 5;
+    bottom: 13px;
+    left: 50%;
+    width: 116%;
+    aspect-ratio: 1672 / 941;
+    transform: translateX(-50%);
+  }
+
+  .assembly-hero__bike {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .assembly-hero__connectors {
+    position: absolute;
+    z-index: 8;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .assembly-hero__connector-base,
+  .assembly-hero__connector-signal {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .assembly-hero__connector-base {
+    stroke: rgb(228 228 231 / 0.28);
+    stroke-width: 1.25;
+  }
+
+  .assembly-hero__connector-signal {
+    stroke: #fec901;
+    stroke-dasharray: 0.035 0.965;
+    stroke-width: 2;
+  }
+
+  .assembly-hero__endpoint {
+    fill: #fec901;
+    filter: drop-shadow(0 0 7px rgb(254 201 1 / 0.5));
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+
+  .assembly-part {
+    position: absolute;
+    z-index: 12;
+    width: 106px;
+    padding: 0.55rem 0.65rem 0.6rem;
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: 0.75rem;
+    background: rgb(23 23 23 / 0.82);
+    box-shadow: 0 12px 36px rgb(0 0 0 / 0.24);
+    backdrop-filter: blur(9px);
+  }
+
+  .assembly-part__meta {
+    display: flex;
+    justify-content: space-between;
+    color: rgb(161 161 170 / 0.78);
+    font-size: 6px;
+    font-weight: 650;
+    letter-spacing: 0.12em;
+  }
+
+  .assembly-part svg {
+    width: 100%;
+    height: 50px;
+    margin-top: 0.25rem;
+    fill: none;
+    stroke: rgb(244 244 245 / 0.82);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.4;
+  }
+
+  .assembly-part--battery { top: 54px; left: 4%; }
+  .assembly-part--headlamp { top: 67px; right: 4%; }
+  .assembly-part--brake { bottom: 24px; left: 3%; }
+  .assembly-part--ignition,
+  .assembly-part--exhaust { display: none; }
+  .assembly-hero__desktop-only { display: none; }
+}
+
+@media (min-width: 640px) {
+  .assembly-hero__surface { min-height: 720px; }
+  .assembly-hero__copy { padding-top: 3.5rem; }
+  .assembly-hero__stage { height: 430px; }
+  .assembly-hero__bike-wrap { bottom: -28px; width: 90%; }
+  .assembly-hero__desktop-only { display: block; }
+  .assembly-part--battery { top: 70px; left: 6%; }
+  .assembly-part--ignition { top: 18px; left: 29%; }
+  .assembly-part--headlamp { top: 58px; right: 7%; }
+  .assembly-part--brake { bottom: 32px; left: 7%; }
+  .assembly-part--exhaust { right: 6%; bottom: 32px; }
+}
+
+@media (min-width: 1024px) {
+  .assembly-hero__surface { min-height: max(680px, calc(100svh - 128px)); }
+  .assembly-hero__copy { padding-top: clamp(3.5rem, 7vh, 5.5rem); }
+  .assembly-hero__stage { height: clamp(400px, 48vh, 520px); }
+  .assembly-hero__bike-wrap { bottom: -48px; width: 72%; }
+  .assembly-part { width: 118px; }
+  .assembly-part--battery { top: 20%; left: 7%; }
+  .assembly-part--ignition { top: 7%; left: 30%; }
+  .assembly-part--headlamp { top: 18%; right: 7%; }
+  .assembly-part--brake { bottom: 13%; left: 8%; }
+  .assembly-part--exhaust { right: 8%; bottom: 13%; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .assembly-hero__surface:not(.is-ready) .assembly-hero__copy { opacity: 0.1; }
+
+  .assembly-hero__surface:not(.is-ready) .assembly-part,
+  .assembly-hero__surface:not(.is-ready) .assembly-hero__endpoint { opacity: 0; }
+
+  .assembly-hero__surface:not(.is-ready) .assembly-hero__bike-wrap { clip-path: inset(0 100% 0 0); }
+
+  .assembly-hero__surface:not(.is-ready) .assembly-hero__connector-base,
+  .assembly-hero__surface:not(.is-ready) .assembly-hero__connector-signal {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .assembly-hero__surface:not(.is-ready) .assembly-hero__connector-signal { opacity: 0; }
+
+  .assembly-hero__surface.is-ready .assembly-hero__copy {
+    animation: assembly-copy-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .assembly-hero__surface.is-ready .assembly-hero__bike-wrap {
+    animation: assembly-bike-reveal 900ms cubic-bezier(0.16, 1, 0.3, 1) 240ms both;
+  }
+
+  .assembly-hero__surface.is-ready .assembly-part {
+    animation:
+      assembly-part-in 520ms cubic-bezier(0.16, 1, 0.3, 1) var(--assembly-part-delay) both,
+      assembly-part-drift 5.6s ease-in-out var(--assembly-drift-delay) infinite alternate;
+  }
+
+  .assembly-hero__surface.is-ready .assembly-hero__connector-base {
+    animation: assembly-line-draw 620ms cubic-bezier(0.16, 1, 0.3, 1) var(--assembly-line-delay) both;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .assembly-hero__surface.is-ready .assembly-hero__connector-signal {
+    animation:
+      assembly-signal-in 620ms cubic-bezier(0.16, 1, 0.3, 1) var(--assembly-line-delay) both,
+      assembly-signal-flow 8s linear 2400ms infinite;
+  }
+
+  .assembly-hero__surface.is-ready .assembly-hero__endpoint {
+    animation: assembly-marker-in 260ms cubic-bezier(0.16, 1, 0.3, 1) var(--assembly-marker-delay) both;
+  }
+
+  .assembly-hero__surface.is-ready .assembly-hero__endpoint.is-ambient {
+    animation: assembly-marker-in 260ms cubic-bezier(0.16, 1, 0.3, 1) 1560ms both, assembly-marker-breathe 3.2s ease-in-out 3s infinite;
+  }
+
+  .assembly-hero__surface.is-fallback .assembly-hero__copy,
+  .assembly-hero__surface.is-fallback .assembly-part,
+  .assembly-hero__surface.is-fallback .assembly-hero__endpoint {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .assembly-hero__surface.is-fallback .assembly-hero__connector-base,
+  .assembly-hero__surface.is-fallback .assembly-hero__connector-signal {
+    animation: none;
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assembly-hero__copy,
+  .assembly-hero__bike-wrap,
+  .assembly-part,
+  .assembly-hero__connector-base,
+  .assembly-hero__connector-signal,
+  .assembly-hero__endpoint {
+    animation: none !important;
+    clip-path: none !important;
+    opacity: 1 !important;
+    stroke-dashoffset: 0 !important;
+    transform: none;
+  }
+}
+
+@keyframes assembly-copy-in {
+  from { opacity: 0.1; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes assembly-bike-reveal {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0); }
+}
+
+@keyframes assembly-part-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.88); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes assembly-line-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes assembly-signal-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes assembly-marker-in {
+  0% { opacity: 0; transform: scale(0.7); }
+  70% { opacity: 1; transform: scale(1.45); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes assembly-part-drift {
+  from { translate: 0 -1px; }
+  to { translate: 0 2px; }
+}
+
+@keyframes assembly-signal-flow {
+  to { stroke-dashoffset: -1; }
+}
+
+@keyframes assembly-marker-breathe {
+  0%, 78%, 100% { transform: scale(1); opacity: 1; }
+  88% { transform: scale(1.35); opacity: 0.72; }
+}
