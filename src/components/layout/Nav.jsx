@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { ChatCircleText, PaperPlaneTilt } from '@phosphor-icons/react'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
+import { useChat } from '../../context/ChatContext'
 import { useCategories, useProducts } from '../../store/hooks'
 import { formatCurrency } from '../../utils/formatCurrency'
 import searchIcon from '../../assets/nav/search-icon.svg'
@@ -11,6 +13,7 @@ import logo from '../../assets/logo-dmb.png'
 export default function Nav() {
   const { items, itemCount, subtotal } = useCart()
   const { isLoggedIn, logout } = useAuth()
+  const { myConversation, myUnread, sendAsCustomer, markReadBy } = useChat()
   const categories = useCategories()
   const products = useProducts()
   const navigate = useNavigate()
@@ -19,6 +22,9 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
   const cartRef = useRef(null)
+  const [inboxOpen, setInboxOpen] = useState(false)
+  const [inboxInput, setInboxInput] = useState('')
+  const inboxRef = useRef(null)
 
   // Sticky header turns dark after scrolling down.
   useEffect(() => {
@@ -43,8 +49,33 @@ export default function Nav() {
     }
   }, [cartOpen])
 
-  // Close the mini-cart whenever the route changes.
-  useEffect(() => setCartOpen(false), [location.pathname])
+  // Close the inbox popup on outside click or Escape.
+  useEffect(() => {
+    if (!inboxOpen) return
+    const onDown = (e) => {
+      if (inboxRef.current && !inboxRef.current.contains(e.target)) setInboxOpen(false)
+    }
+    const onKey = (e) => e.key === 'Escape' && setInboxOpen(false)
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [inboxOpen])
+
+  // Mark the customer's unread admin replies as read once they open the inbox.
+  useEffect(() => {
+    if (inboxOpen && myConversation && myConversation.unreadForCustomer > 0) {
+      markReadBy(myConversation.id, 'customer')
+    }
+  }, [inboxOpen])
+
+  // Close the mini-cart and inbox whenever the route changes.
+  useEffect(() => {
+    setCartOpen(false)
+    setInboxOpen(false)
+  }, [location.pathname])
 
   const categoryPreviews = categories.map((c) => ({
     ...c,
@@ -58,6 +89,12 @@ export default function Nav() {
     .reverse()
     .map((i) => ({ ...i, product: products.find((p) => p.id === i.productId) }))
     .filter((i) => i.product)
+
+  const handleSendInbox = () => {
+    if (!inboxInput.trim()) return
+    sendAsCustomer(inboxInput)
+    setInboxInput('')
+  }
 
   const link = scrolled ? 'text-neutral-0' : 'text-neutral-900'
   const subLink = scrolled ? 'text-neutral-300 hover:text-neutral-0' : 'text-neutral-600 hover:text-neutral-900'
@@ -194,6 +231,74 @@ export default function Nav() {
                   </div>
                 </>
               )}
+            </div>
+          )}
+        </div>
+
+        {/* Inbox */}
+        <div className="relative" ref={inboxRef}>
+          <button
+            type="button"
+            aria-label="Pesan"
+            aria-expanded={inboxOpen}
+            onClick={() => {
+              if (!isLoggedIn) {
+                navigate('/login')
+                return
+              }
+              setInboxOpen((o) => !o)
+            }}
+            className="relative flex size-5 items-center justify-center"
+          >
+            <ChatCircleText size={20} className={link} />
+            {isLoggedIn && myUnread > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-secondary-600 text-xs font-semibold text-neutral-900">
+                {myUnread}
+              </span>
+            )}
+          </button>
+
+          {isLoggedIn && inboxOpen && (
+            <div className="absolute right-0 top-full z-50 mt-3 flex w-80 flex-col overflow-hidden rounded-2xl border border-neutral-100 bg-neutral-0 text-left shadow-xl">
+              <div className="border-b border-neutral-100 px-4 py-3">
+                <h3 className="font-medium text-neutral-900">Chat dengan Toko</h3>
+              </div>
+
+              <div className="flex h-72 flex-col gap-3 overflow-y-auto px-4 py-3">
+                {!myConversation || myConversation.messages.length === 0 ? (
+                  <p className="m-auto text-center text-sm text-neutral-500">Mulai chat dengan kami.</p>
+                ) : (
+                  myConversation.messages.map((msg) => (
+                    <div key={msg.id} className={`flex ${msg.from === 'customer' ? 'justify-end' : 'justify-start'}`}>
+                      <div
+                        className={`max-w-[75%] rounded-2xl px-3 py-2 text-sm ${
+                          msg.from === 'customer' ? 'bg-neutral-900 text-neutral-0' : 'bg-neutral-100 text-neutral-900'
+                        }`}
+                      >
+                        {msg.text}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 border-t border-neutral-100 px-4 py-3">
+                <input
+                  value={inboxInput}
+                  onChange={(e) => setInboxInput(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSendInbox()}
+                  placeholder="Ketik pesan..."
+                  className="flex-1 bg-transparent text-sm text-neutral-900 placeholder:text-neutral-400 outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={handleSendInbox}
+                  aria-label="Kirim pesan"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-neutral-0 hover:bg-neutral-800"
+                >
+                  <PaperPlaneTilt size={16} weight="fill" />
+                </button>
+              </div>
             </div>
           )}
         </div>
