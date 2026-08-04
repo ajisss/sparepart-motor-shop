@@ -220,8 +220,9 @@ export default function HomePage() {
       </section>
 
       {/* CTA band */}
-      <section className="bg-secondary-600 px-4 py-20 text-center lg:px-16">
-        <div className="mx-auto max-w-3xl">
+      <section className="relative overflow-hidden bg-secondary-600 px-4 py-20 text-center lg:px-16">
+        <CtaOrnaments />
+        <div className="relative z-10 mx-auto max-w-3xl">
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-900/70">
             Motormu, prioritas kami
           </span>
@@ -394,6 +395,63 @@ function ChatIcon() {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="size-5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M4 5h16v11H8l-4 3V5z" />
       <path d="M8 9h8M8 12h5" />
+    </svg>
+  )
+}
+
+// Decorative sparepart-themed vector ornaments for the CTA band background.
+// Dark shapes at low opacity — behind the content, non-interactive.
+function CtaOrnaments() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden text-neutral-900">
+      <Gear teeth={10} className="absolute -left-12 -top-12 size-44 opacity-[0.07]" />
+      <Gear teeth={14} className="absolute -bottom-20 left-10 size-64 opacity-[0.05]" />
+      <Gear teeth={9} className="absolute right-1/4 -top-16 size-32 opacity-[0.06]" />
+      <HexNut className="absolute right-10 top-10 size-16 rotate-12 opacity-[0.09]" />
+      <HexNut className="absolute left-8 bottom-10 size-10 -rotate-6 opacity-[0.08]" />
+      <Wrench className="absolute -right-4 -bottom-6 size-48 -rotate-12 opacity-[0.07]" />
+      <Chain className="absolute right-16 bottom-16 w-40 opacity-[0.06]" />
+    </div>
+  )
+}
+
+function Gear({ teeth = 10, className = '' }) {
+  const angles = Array.from({ length: teeth }, (_, i) => (i * 360) / teeth)
+  return (
+    <svg viewBox="0 0 100 100" className={className} fill="none" stroke="currentColor" aria-hidden="true">
+      {angles.map((a, i) => (
+        <rect key={i} x="46" y="3" width="8" height="16" rx="2" fill="currentColor" transform={`rotate(${a} 50 50)`} />
+      ))}
+      <circle cx="50" cy="50" r="30" strokeWidth="7" />
+      <circle cx="50" cy="50" r="12" strokeWidth="6" />
+    </svg>
+  )
+}
+
+function HexNut({ className = '' }) {
+  return (
+    <svg viewBox="0 0 100 100" className={className} fill="none" stroke="currentColor" strokeWidth="7" strokeLinejoin="round" aria-hidden="true">
+      <polygon points="50,6 89,28 89,72 50,94 11,72 11,28" />
+      <circle cx="50" cy="50" r="18" />
+    </svg>
+  )
+}
+
+function Wrench({ className = '' }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
+    </svg>
+  )
+}
+
+function Chain({ className = '' }) {
+  return (
+    <svg viewBox="0 0 120 34" className={className} fill="none" stroke="currentColor" strokeWidth="4" aria-hidden="true">
+      <rect x="3" y="7" width="30" height="20" rx="10" />
+      <rect x="27" y="7" width="30" height="20" rx="10" />
+      <rect x="51" y="7" width="30" height="20" rx="10" />
+      <rect x="75" y="7" width="30" height="20" rx="10" />
     </svg>
   )
 }
