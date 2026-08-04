@@ -12,11 +12,16 @@ export default function OrderTimeline({ history = [] }) {
         return (
           <li key={i} className="flex gap-3">
             <div className="flex flex-col items-center">
-              <span
-                className={`mt-1 size-3 shrink-0 rounded-full ${
-                  isCurrent ? 'bg-primary-600' : 'bg-neutral-300'
-                }`}
-              />
+              <span className="relative mt-1 flex size-3.5 shrink-0 items-center justify-center">
+                {isCurrent ? (
+                  <>
+                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-secondary-600 opacity-60 motion-reduce:hidden" />
+                    <span className="relative size-3 rounded-full bg-neutral-900 ring-2 ring-secondary-600" />
+                  </>
+                ) : (
+                  <span className="size-3 rounded-full bg-neutral-300" />
+                )}
+              </span>
               {!isLast && <span className="w-px flex-1 bg-neutral-200" />}
             </div>
             <div className={isLast ? '' : 'pb-6'}>

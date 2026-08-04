@@ -1,17 +1,50 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import { useCategories, useProducts } from '../../store/hooks'
+import { formatCurrency } from '../../utils/formatCurrency'
 import searchIcon from '../../assets/nav/search-icon.svg'
 import cartIcon from '../../assets/nav/cart-icon.svg'
 import logo from '../../assets/logo-dmb.png'
 
 export default function Nav() {
-  const { itemCount } = useCart()
+  const { items, itemCount, subtotal } = useCart()
   const { isLoggedIn, logout } = useAuth()
   const categories = useCategories()
   const products = useProducts()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const [scrolled, setScrolled] = useState(false)
+  const [cartOpen, setCartOpen] = useState(false)
+  const cartRef = useRef(null)
+
+  // Sticky header turns dark after scrolling down.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Close the mini-cart on outside click or Escape.
+  useEffect(() => {
+    if (!cartOpen) return
+    const onDown = (e) => {
+      if (cartRef.current && !cartRef.current.contains(e.target)) setCartOpen(false)
+    }
+    const onKey = (e) => e.key === 'Escape' && setCartOpen(false)
+    document.addEventListener('mousedown', onDown)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('mousedown', onDown)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [cartOpen])
+
+  // Close the mini-cart whenever the route changes.
+  useEffect(() => setCartOpen(false), [location.pathname])
 
   const categoryPreviews = categories.map((c) => ({
     ...c,
@@ -19,13 +52,27 @@ export default function Nav() {
     count: products.filter((p) => p.category === c.id && p.published).length,
   }))
 
+  // Only the 5 most recently added items (newest first).
+  const recentItems = items
+    .slice(-5)
+    .reverse()
+    .map((i) => ({ ...i, product: products.find((p) => p.id === i.productId) }))
+    .filter((i) => i.product)
+
+  const link = scrolled ? 'text-neutral-0' : 'text-neutral-900'
+  const subLink = scrolled ? 'text-neutral-300 hover:text-neutral-0' : 'text-neutral-600 hover:text-neutral-900'
+
   return (
-    <header className="relative z-40 flex items-center justify-between border-b border-neutral-100 bg-neutral-0 px-4 py-4 lg:px-16">
+    <header
+      className={`sticky top-0 z-50 flex items-center justify-between border-b px-4 py-4 transition-colors duration-300 lg:px-16 ${
+        scrolled ? 'border-neutral-0/10 bg-neutral-900' : 'border-neutral-100 bg-neutral-0'
+      }`}
+    >
       <Link to="/" aria-label="DMB Moto Shop — Beranda" className="flex items-center">
         <img src={logo} alt="DMB Moto Shop" className="h-10 w-auto lg:h-12" />
       </Link>
 
-      <nav className="hidden items-center gap-6 text-xs font-medium uppercase tracking-[0.24px] text-neutral-900 lg:flex">
+      <nav className={`hidden items-center gap-6 text-xs font-medium uppercase tracking-[0.24px] lg:flex ${link}`}>
         <Link to="/">Home</Link>
 
         {/* Cari Produk — hover megamenu */}
@@ -73,19 +120,87 @@ export default function Nav() {
 
       <div className="flex items-center gap-4">
         <Link to="/search" aria-label="Cari" className="flex size-5 items-center justify-center">
-          <img src={searchIcon} alt="" className="size-full" />
+          <img src={searchIcon} alt="" className={`size-full ${scrolled ? 'invert' : ''}`} />
         </Link>
-        <Link to="/cart" aria-label="Keranjang" className="relative flex size-5 items-center justify-center">
-          <img src={cartIcon} alt="" className="size-full" />
-          {itemCount > 0 && (
-            <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-secondary-600 text-xs font-semibold text-neutral-900">
-              {itemCount}
-            </span>
+
+        {/* Cart + mini-cart popup */}
+        <div className="relative" ref={cartRef}>
+          <button
+            type="button"
+            aria-label="Keranjang"
+            aria-expanded={cartOpen}
+            onClick={() => setCartOpen((o) => !o)}
+            className="relative flex size-5 items-center justify-center"
+          >
+            <img src={cartIcon} alt="" className={`size-full ${scrolled ? 'invert' : ''}`} />
+            {itemCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-secondary-600 text-xs font-semibold text-neutral-900">
+                {itemCount}
+              </span>
+            )}
+          </button>
+
+          {cartOpen && (
+            <div className="absolute right-0 top-full z-50 mt-3 w-80 rounded-2xl border border-neutral-100 bg-neutral-0 p-4 text-left shadow-xl">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="font-medium text-neutral-900">Keranjang</h3>
+                <span className="text-xs text-neutral-500">{itemCount} item</span>
+              </div>
+
+              {recentItems.length === 0 ? (
+                <p className="py-6 text-center text-sm text-neutral-500">Keranjang masih kosong.</p>
+              ) : (
+                <>
+                  <ul className="flex flex-col gap-3">
+                    {recentItems.map((i) => (
+                      <li key={i.productId} className="flex items-center gap-3">
+                        <span className="size-11 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+                          <img src={i.product.images?.[0]} alt="" className="size-full object-cover" />
+                        </span>
+                        <span className="flex min-w-0 flex-1 flex-col">
+                          <span className="truncate text-sm font-medium text-neutral-900">{i.product.name}</span>
+                          <span className="text-xs text-neutral-500">
+                            {i.qty} × {formatCurrency(i.product.price)}
+                          </span>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {items.length > 5 && (
+                    <p className="mt-3 text-center text-xs text-neutral-500">
+                      Menampilkan 5 item terbaru dari {items.length} produk
+                    </p>
+                  )}
+
+                  <div className="mt-4 flex items-center justify-between border-t border-neutral-100 pt-3 text-sm">
+                    <span className="text-neutral-600">Subtotal</span>
+                    <span className="font-semibold text-neutral-900">{formatCurrency(subtotal)}</span>
+                  </div>
+
+                  <div className="mt-4 flex flex-col gap-2">
+                    <Link
+                      to="/cart"
+                      className="flex items-center justify-center rounded-pill border border-neutral-200 px-4 py-2.5 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50"
+                    >
+                      Lihat Keranjang
+                    </Link>
+                    <Link
+                      to="/checkout"
+                      className="flex items-center justify-center rounded-pill bg-neutral-900 px-4 py-2.5 text-sm font-medium text-neutral-0 transition-colors hover:bg-neutral-800"
+                    >
+                      Checkout
+                    </Link>
+                  </div>
+                </>
+              )}
+            </div>
           )}
-        </Link>
+        </div>
+
         {isLoggedIn ? (
           <>
-            <Link to="/akun" className="text-sm text-neutral-600">
+            <Link to="/akun" className={`text-sm ${subLink}`}>
               Akun
             </Link>
             <button
@@ -93,13 +208,13 @@ export default function Nav() {
                 logout()
                 navigate('/login')
               }}
-              className="text-sm text-neutral-600"
+              className={`text-sm ${subLink}`}
             >
               Logout
             </button>
           </>
         ) : (
-          <Link to="/login" className="text-sm text-neutral-600">
+          <Link to="/login" className={`text-sm ${subLink}`}>
             Login
           </Link>
         )}
