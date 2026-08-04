@@ -13,7 +13,7 @@ export default function Nav() {
   return (
     <header className="flex items-center justify-between px-4 lg:px-16 py-4 border-b border-neutral-100 bg-neutral-0">
       <Link to="/" aria-label="DMB Moto Shop — Beranda" className="flex items-center">
-        <img src={logo} alt="DMB Moto Shop" className="h-11 w-auto lg:h-12" />
+        <img src={logo} alt="DMB Moto Shop" className="h-14 w-auto lg:h-16" />
       </Link>
       <nav className="hidden lg:flex items-center gap-6 text-xs font-medium uppercase tracking-[0.24px] text-neutral-900">
         <Link to="/">Home</Link>
