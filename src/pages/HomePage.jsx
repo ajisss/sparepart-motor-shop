@@ -5,67 +5,68 @@ import ProductCard from '../components/ui/ProductCard'
 import Button from '../components/ui/Button'
 import { useHomepage, useProducts } from '../store/hooks'
 
-// Landing page — section composition mirrors a reference long-form landing
-// layout (announcement bar → hero → marquee → intent cards → product grid →
-// how-it-works → CTA band → why → FAQ → trust row → footer), rebuilt with DMB's
-// own content and the black + yellow brand. Token-only, no new dependencies.
+// Landing page — long-form section composition (announcement → hero → marquee →
+// product lines → product grid → how-it-works → CTA band → why → FAQ → trust →
+// footer), with DMB's own content as a motorcycle-parts MANUFACTURER (produsen),
+// black + yellow brand. Token-only, no new dependencies. Image areas use styled
+// placeholders until real photography is available.
 
 const MARQUEE_ITEMS = [
+  'Diproduksi Sendiri',
   'Sparepart Original',
   'Garansi Keaslian',
-  'Gratis Ongkir 300rb+',
-  'Kurir Same Day Bandung',
-  'Pembayaran Aman via Midtrans',
+  'Harga Langsung Produsen',
   'Kirim Se-Indonesia',
+  'Bandung',
 ]
 
-const INTENTS = [
+const PRODUCT_LINES = [
   {
-    title: 'Servis Rutin',
-    desc: 'Oli, busi, kampas rem, filter — stok lengkap untuk perawatan berkala motormu.',
-    cta: 'Belanja Part Servis',
+    title: 'Mesin & Pengereman',
+    desc: 'Kampas rem, kopling, part mesin presisi — diproduksi dengan standar QC pabrikan.',
+    cta: 'Lihat Lini Mesin',
     href: '/search?category=mesin',
   },
   {
-    title: 'Upgrade Performa',
-    desc: 'Knalpot, CDI, koil, hingga part racing untuk dongkrak tenaga dan tampilan.',
-    cta: 'Lihat Part Upgrade',
-    href: '/search',
+    title: 'Kelistrikan & Pengapian',
+    desc: 'Aki, busi, koil, dan komponen kelistrikan yang awet untuk motor harian maupun modifikasi.',
+    cta: 'Lihat Kelistrikan',
+    href: '/search?category=kelistrikan',
   },
   {
-    title: 'Ganti Part Rusak',
-    desc: 'Aki soak, lampu mati, spion patah? Cari penggantinya yang ori di sini.',
-    cta: 'Cari Sparepart',
+    title: 'Bodi & Aksesoris',
+    desc: 'Spion, cover body, hingga aksesoris racing — bikin motormu tampil beda.',
+    cta: 'Lihat Aksesoris',
     href: '/search',
   },
 ]
 
 const STEPS = [
-  { n: '01', title: 'Pilih sparepart', desc: 'Telusuri katalog per kategori atau cari langsung part yang kamu butuhkan.' },
+  { n: '01', title: 'Pilih sparepart', desc: 'Telusuri katalog per lini produk atau cari langsung part yang kamu butuhkan.' },
   { n: '02', title: 'Checkout & bayar', desc: 'Isi alamat, pilih ekspedisi, bayar aman lewat simulasi Midtrans Snap.' },
-  { n: '03', title: 'Kami proses & kirim', desc: 'Pesanan disiapkan, shipment dibuat, dan nomor resi otomatis terbit.' },
+  { n: '03', title: 'Kami proses & kirim', desc: 'Pesanan disiapkan langsung dari gudang produsen, resi terbit otomatis.' },
   { n: '04', title: 'Lacak sampai tiba', desc: 'Pantau status pesanan real-time dari halaman Lacak Pesanan atau akunmu.' },
 ]
 
 const WHY = [
-  { n: '01', title: 'Keaslian terjamin', desc: 'Setiap part dijamin original dengan sumber resmi — bukan KW.' },
-  { n: '02', title: 'Harga bersahabat', desc: 'Harga bengkel yang jujur, plus promo dan kode ongkir berkala.' },
-  { n: '03', title: 'Kirim cepat', desc: 'Diproses hari yang sama, dikirim ke seluruh Indonesia via ekspedisi pilihan.' },
+  { n: '01', title: 'Diproduksi & diuji sendiri' },
+  { n: '02', title: 'Harga langsung dari produsen' },
+  { n: '03', title: 'Cocok untuk banyak tipe motor' },
 ]
 
 const FAQS = [
-  { q: 'Apakah semua sparepart di DMB original?', a: 'Ya. Seluruh part yang kami jual dijamin original dengan sumber resmi. Setiap produk mencantumkan merek dan kecocokan motornya.' },
+  { q: 'Apakah sparepart DMB original?', a: 'Ya. DMB adalah produsen sparepart motor — setiap part diproduksi dan diuji sendiri dengan standar QC pabrikan, bukan barang KW.' },
   { q: 'Bagaimana cara melacak pesanan saya?', a: 'Pelanggan terdaftar bisa melihat riwayat & status di halaman Akun. Tamu bisa memakai halaman Lacak Pesanan dengan Order ID + email/HP yang dipakai saat checkout.' },
   { q: 'Metode pembayaran apa yang didukung?', a: 'Pembayaran diproses lewat Midtrans Snap (Virtual Account, GoPay, QRIS). Pada prototipe ini pembayaran disimulasikan.' },
-  { q: 'Berapa lama pengiriman?', a: 'Tergantung ekspedisi dan layanan yang dipilih saat checkout — mulai dari Same Day (Bandung) sampai Reguler 2–3 hari ke luar kota.' },
-  { q: 'Apakah bisa retur atau refund?', a: 'Bisa. Jika ada kendala pada pesanan, hubungi CS kami dan status refund akan diperbarui pada pesananmu.' },
+  { q: 'Apakah melayani grosir atau reseller?', a: 'Ya. Sebagai produsen, kami melayani pembelian grosir untuk bengkel dan reseller. Hubungi tim kami untuk penawaran harga khusus.' },
+  { q: 'Berapa lama pengiriman?', a: 'Tergantung ekspedisi dan layanan yang dipilih saat checkout — mulai Same Day (Bandung) sampai Reguler 2–3 hari ke luar kota.' },
 ]
 
 const TRUST = [
   { icon: ShieldIcon, title: 'Pembayaran aman', sub: 'Diproses lewat Midtrans' },
   { icon: BoxIcon, title: 'Dikemas rapi', sub: 'Aman sampai tujuan' },
   { icon: TruckIcon, title: 'Kirim 1–3 hari', sub: 'Ekspedisi pilihanmu' },
-  { icon: ChatIcon, title: 'CS siap bantu', sub: 'Sebelum & sesudah beli' },
+  { icon: ChatIcon, title: 'Tim siap bantu', sub: 'Sebelum & sesudah beli' },
 ]
 
 export default function HomePage() {
@@ -90,13 +91,12 @@ export default function HomePage() {
       {/* Hero */}
       <section className="px-4 pt-6 lg:px-16 lg:pt-8">
         <div
-          className="relative flex min-h-[520px] items-center justify-center overflow-hidden rounded-2xl bg-neutral-900 px-6 py-16 lg:min-h-[600px] lg:py-24"
+          className="relative mx-auto flex min-h-[520px] max-w-7xl items-center justify-center overflow-hidden rounded-2xl bg-neutral-900 px-6 py-20 lg:min-h-[600px] lg:py-28"
           style={{
             backgroundImage:
               'radial-gradient(circle at 80% 10%, rgba(254,201,1,0.14), transparent 45%), radial-gradient(circle at 15% 90%, rgba(254,201,1,0.08), transparent 40%)',
           }}
         >
-          {/* Discount seal */}
           <div className="absolute right-6 top-6 hidden lg:block">
             <StarburstBadge />
           </div>
@@ -104,14 +104,14 @@ export default function HomePage() {
           <div className="relative z-10 flex max-w-2xl flex-col items-center gap-6 text-center">
             <span className="inline-flex items-center gap-2 rounded-pill border border-neutral-0/20 bg-neutral-0/10 px-3 py-1.5 text-sm text-neutral-0 backdrop-blur">
               <span aria-hidden="true" className="size-1.5 rounded-full bg-secondary-600" />
-              Sparepart original, siap kirim hari ini
+              Produsen sparepart motor · Bandung
             </span>
             <h1 className="text-4xl font-medium leading-[1.05] tracking-tight text-neutral-0 lg:text-6xl">
-              Sparepart terbaik untuk <span className="text-secondary-600">motor kesayanganmu</span>
+              Sparepart motor original, <span className="text-secondary-600">bikinan sendiri</span>
             </h1>
             <p className="max-w-xl text-base text-neutral-200 lg:text-lg">
-              Dari mesin, kelistrikan, sampai body & aksesoris — semua kebutuhan sparepart motormu,
-              original dengan garansi keaslian dan pengiriman cepat.
+              DMB memproduksi sparepart motor berkualitas — dari mesin, kelistrikan, sampai bodi &amp;
+              aksesoris. Langsung dari produsen ke tanganmu, dengan garansi keaslian.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link to="/search">
@@ -137,121 +137,144 @@ export default function HomePage() {
       </section>
 
       {/* Marquee */}
-      <Marquee />
+      <div className="mt-16 lg:mt-24">
+        <Marquee />
+      </div>
 
-      {/* Intent cards */}
+      {/* Product lines */}
       <section className="px-4 py-16 lg:px-16 lg:py-24">
-        <h2 className="mb-10 text-center text-3xl font-medium tracking-tight text-neutral-900 lg:text-5xl">
-          Satu kebutuhan. Satu motor. Satu part.
-        </h2>
-        <div className="grid gap-5 md:grid-cols-3">
-          {INTENTS.map((it) => (
-            <div key={it.title} className="flex flex-col gap-4 rounded-2xl bg-neutral-900 p-8 text-left">
-              <h3 className="text-2xl font-medium text-neutral-0">{it.title}</h3>
-              <p className="flex-1 text-sm text-neutral-300">{it.desc}</p>
-              <Link to={it.href} className="w-fit">
-                <Button variant="accent" size="sm">{it.cta}</Button>
-              </Link>
-            </div>
-          ))}
+        <div className="mx-auto max-w-7xl">
+          <h2 className="mx-auto mb-12 max-w-3xl text-center text-3xl font-medium tracking-tight text-neutral-900 lg:mb-16 lg:text-5xl">
+            Diproduksi untuk setiap lini motormu.
+          </h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            {PRODUCT_LINES.map((it) => (
+              <div key={it.title} className="flex flex-col gap-4 rounded-2xl bg-neutral-900 p-8">
+                <h3 className="text-2xl font-medium text-neutral-0">{it.title}</h3>
+                <p className="flex-1 text-sm leading-relaxed text-neutral-300">{it.desc}</p>
+                <Link to={it.href} className="w-fit">
+                  <Button variant="accent" size="sm">{it.cta}</Button>
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Product grid */}
       <section className="px-4 pb-16 lg:px-16 lg:pb-24">
-        <div className="mb-10 flex flex-col items-center gap-3 text-center">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-800">
-            Produk Terbaru
-          </span>
-          <h2 className="max-w-2xl text-3xl font-medium tracking-tight text-neutral-900 lg:text-5xl">
-            Part pilihan yang paling dicari
-          </h2>
-          <p className="max-w-md text-neutral-600">
-            Kurasi sparepart original terlaris — siap kirim, cocok untuk motor harian maupun modifikasi.
-          </p>
-        </div>
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {featured.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
-        <div className="mt-10 flex justify-center">
-          <Link to="/search">
-            <Button variant="primary" size="lg">Lihat Semua Produk</Button>
-          </Link>
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 flex flex-col items-center gap-3 text-center lg:mb-16">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-800">
+              Produk Terbaru
+            </span>
+            <h2 className="max-w-2xl text-3xl font-medium tracking-tight text-neutral-900 lg:text-5xl">
+              Part pilihan yang paling dicari
+            </h2>
+            <p className="max-w-md text-neutral-600">
+              Kurasi sparepart original terlaris — siap kirim, cocok untuk motor harian maupun modifikasi.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4 lg:gap-x-6">
+            {featured.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+          <div className="mt-14 flex justify-center">
+            <Link to="/search">
+              <Button variant="primary" size="lg">Lihat Semua Produk</Button>
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* How it works */}
       <section className="bg-neutral-900 px-4 py-16 lg:px-16 lg:py-24">
-        <div className="mb-12 flex flex-col items-center gap-3 text-center">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-600">
-            Cara Belanja
-          </span>
-          <h2 className="max-w-2xl text-3xl font-medium tracking-tight text-neutral-0 lg:text-5xl">
-            Dari cari part sampai sampai depan pintu, dalam 4 langkah
-          </h2>
-        </div>
-        <div className="grid gap-8 md:grid-cols-4">
-          {STEPS.map((s) => (
-            <div key={s.n} className="flex flex-col gap-3">
-              <span className="text-2xl font-semibold text-secondary-600">{s.n}</span>
-              <span className="h-px w-full bg-neutral-0/15" />
-              <h3 className="text-lg font-medium text-neutral-0">{s.title}</h3>
-              <p className="text-sm text-neutral-400">{s.desc}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-12 flex justify-center">
-          <Link to="/search">
-            <Button variant="accent" size="lg">Mulai Belanja</Button>
-          </Link>
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-14 flex flex-col items-center gap-3 text-center lg:mb-16">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-600">
+              Cara Belanja
+            </span>
+            <h2 className="max-w-2xl text-3xl font-medium tracking-tight text-neutral-0 lg:text-5xl">
+              Dari cari part sampai depan pintu, dalam 4 langkah
+            </h2>
+          </div>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {STEPS.map((s) => (
+              <div key={s.n} className="flex flex-col gap-4">
+                <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl border border-neutral-0/10 bg-neutral-0/5">
+                  <PlaceholderMark />
+                  <span className="absolute left-3 top-3 text-sm font-semibold text-secondary-600">{s.n}</span>
+                </div>
+                <h3 className="text-lg font-medium text-neutral-0">{s.title}</h3>
+                <p className="text-sm leading-relaxed text-neutral-400">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-14 flex justify-center">
+            <Link to="/search">
+              <Button variant="accent" size="lg">Mulai Belanja</Button>
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* CTA band */}
-      <section className="bg-secondary-600 px-4 py-16 text-center lg:px-16 lg:py-20">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-900/70">
-          Motormu, prioritas kami
-        </span>
-        <h2 className="mx-auto mt-3 max-w-3xl text-3xl font-medium tracking-tight text-neutral-900 lg:text-5xl">
-          Siap bikin motormu prima lagi?
-        </h2>
-        <p className="mt-4 text-neutral-900/80">
-          Original • Gratis ongkir 300rb+ • Kirim se-Indonesia • Bandung
-        </p>
-        <div className="mt-8 flex justify-center">
-          <Link to="/search">
-            <Button variant="primary" size="lg">Belanja Sekarang</Button>
-          </Link>
+      <section className="bg-secondary-600 px-4 py-20 text-center lg:px-16">
+        <div className="mx-auto max-w-3xl">
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-900/70">
+            Motormu, prioritas kami
+          </span>
+          <h2 className="mt-4 text-3xl font-medium tracking-tight text-neutral-900 lg:text-5xl">
+            Siap upgrade motormu dengan part original?
+          </h2>
+          <p className="mt-4 text-neutral-900/80">
+            Diproduksi sendiri • Gratis ongkir 300rb+ • Kirim se-Indonesia • Bandung
+          </p>
+          <div className="mt-8 flex justify-center">
+            <Link to="/search">
+              <Button variant="primary" size="lg">Belanja Sekarang</Button>
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Why */}
+      {/* Why choose us — big numbered image cards */}
       <section className="px-4 py-16 lg:px-16 lg:py-24">
-        <div className="mb-12 flex flex-col items-center gap-3 text-center">
-          <h2 className="max-w-2xl text-3xl font-medium tracking-tight text-neutral-900 lg:text-5xl">
-            Kenapa belanja di DMB?
-          </h2>
-          <p className="max-w-md text-neutral-600">
-            Karena mengurus motor harusnya gampang, jujur, dan cepat.
-          </p>
-        </div>
-        <div className="grid gap-8 md:grid-cols-3">
-          {WHY.map((w) => (
-            <div key={w.n} className="flex flex-col gap-3 border-t-2 border-secondary-600 pt-5">
-              <span className="text-sm font-semibold text-secondary-800">{w.n}</span>
-              <h3 className="text-xl font-medium text-neutral-900">{w.title}</h3>
-              <p className="text-sm text-neutral-600">{w.desc}</p>
-            </div>
-          ))}
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 flex flex-col items-center gap-3 text-center lg:mb-16">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-800">
+              Kenapa DMB
+            </span>
+            <h2 className="max-w-2xl text-3xl font-medium tracking-tight text-neutral-900 lg:text-5xl">
+              Kenapa pilih sparepart DMB?
+            </h2>
+            <p className="max-w-md text-neutral-600">
+              Karena mengurus motor harusnya gampang, jujur, dan cepat — langsung dari produsennya.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {WHY.map((w) => (
+              <div
+                key={w.n}
+                className="group relative flex aspect-[4/5] items-end overflow-hidden rounded-2xl bg-neutral-100"
+              >
+                <PlaceholderMark large />
+                <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-neutral-900/85 via-neutral-900/20 to-transparent" />
+                <div className="relative z-10 flex flex-col gap-1 p-6">
+                  <span className="text-sm font-semibold text-secondary-600">{w.n}</span>
+                  <h3 className="text-2xl font-medium leading-tight text-neutral-0">{w.title}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* FAQ */}
       <section className="px-4 pb-16 lg:px-16 lg:pb-24">
         <div className="mx-auto max-w-3xl">
-          <div className="mb-10 flex flex-col items-center gap-3 text-center">
+          <div className="mb-12 flex flex-col items-center gap-3 text-center lg:mb-14">
             <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-800">
               Pertanyaan Umum
             </span>
@@ -276,8 +299,8 @@ export default function HomePage() {
       </section>
 
       {/* Trust row */}
-      <section className="border-t border-neutral-100 px-4 py-12 lg:px-16">
-        <div className="grid gap-8 text-center sm:grid-cols-2 lg:grid-cols-4">
+      <section className="border-t border-neutral-100 px-4 py-14 lg:px-16">
+        <div className="mx-auto grid max-w-7xl gap-10 text-center sm:grid-cols-2 lg:grid-cols-4">
           {TRUST.map(({ icon: Icon, title, sub }) => (
             <div key={title} className="flex flex-col items-center gap-2">
               <span className="flex size-11 items-center justify-center rounded-full bg-secondary-100 text-secondary-800">
@@ -311,6 +334,20 @@ function Marquee() {
         ))}
       </div>
     </div>
+  )
+}
+
+// Neutral image placeholder mark, used until real photography is supplied.
+function PlaceholderMark({ large }) {
+  return (
+    <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-neutral-400">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={large ? 'size-9' : 'size-6'} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <circle cx="8.5" cy="9.5" r="1.5" />
+        <path d="M21 16l-5-5-6 6-3-3-4 4" />
+      </svg>
+      <span className="text-[10px] uppercase tracking-[0.2em]">Gambar</span>
+    </span>
   )
 }
 
