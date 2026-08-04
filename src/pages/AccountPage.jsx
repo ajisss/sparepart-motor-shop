@@ -131,19 +131,19 @@ function OrdersSection({ orders }) {
             <Link
               key={o.id}
               to={`/pesanan/${o.id}`}
-              className="flex flex-col gap-2 rounded-2xl border border-neutral-200 bg-neutral-0 p-4 transition-colors hover:border-neutral-900"
+              className="flex items-start justify-between gap-4 rounded-2xl border border-neutral-200 bg-neutral-0 p-4 transition-colors hover:border-neutral-900"
             >
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 flex-col gap-1">
                 <span className="font-mono text-sm font-medium text-neutral-900">{o.id}</span>
-                <StatusBadge status={o.status} />
-              </div>
-              <p className="text-xs text-neutral-500">{formatDate(o.createdAt)}</p>
-              <div className="flex items-center justify-between gap-3 text-sm">
-                <span className="text-neutral-600">
+                <span className="text-xs text-neutral-500">{formatDate(o.createdAt)}</span>
+                <span className="truncate text-sm text-neutral-600">
                   {o.items[0]?.name}
                   {o.items.length > 1 ? ` +${o.items.length - 1} lainnya` : ''}
                 </span>
-                <span className="font-medium text-neutral-900">{formatCurrency(o.total)}</span>
+              </div>
+              <div className="flex shrink-0 flex-col items-end gap-2">
+                <StatusBadge status={o.status} />
+                <span className="text-sm font-medium text-neutral-900">{formatCurrency(o.total)}</span>
               </div>
             </Link>
           ))}
