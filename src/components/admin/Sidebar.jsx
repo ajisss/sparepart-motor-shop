@@ -12,16 +12,11 @@ import {
   CaretDown,
   Sparkle,
 } from '@phosphor-icons/react'
+import { useChat } from '../../context/ChatContext'
 
 // Exact rebuild of the Figma "Sidebar" component (node 37:346):
 // floating white rounded-[40px] card, Geist 18px pill nav items, grouped
 // Menu / General / Tools, Chats danger badge, HubSpot tool, mint Upgrade card.
-const MENU = [
-  { to: '/admin', label: 'Dashboard', Icon: SquaresFour, end: true },
-  { to: '/admin/orders', label: 'Pesanan', Icon: ClipboardText },
-  { to: '/admin/products', label: 'Produk', Icon: Package },
-  { to: '/admin/chats', label: 'Chat', Icon: ChatCircleText, badge: 4 },
-]
 const GENERAL = [
   { to: '/admin/settings', label: 'Pengaturan', Icon: Gear },
   { to: '/admin/integration', label: 'Integrasi', Icon: PlugsConnected },
@@ -67,6 +62,14 @@ function Item({ to, label, Icon, end, badge }) {
 }
 
 export default function Sidebar() {
+  const { adminUnreadTotal } = useChat()
+  const MENU = [
+    { to: '/admin', label: 'Dashboard', Icon: SquaresFour, end: true },
+    { to: '/admin/orders', label: 'Pesanan', Icon: ClipboardText },
+    { to: '/admin/products', label: 'Produk', Icon: Package },
+    { to: '/admin/chats', label: 'Chat', Icon: ChatCircleText, badge: adminUnreadTotal > 0 ? adminUnreadTotal : undefined },
+  ]
+
   return (
     <aside className="relative hidden w-[279px] shrink-0 flex-col overflow-hidden rounded-[40px] bg-white lg:flex">
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-6 pb-[200px]">
