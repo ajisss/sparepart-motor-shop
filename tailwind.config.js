@@ -60,6 +60,15 @@ export default {
       boxShadow: {
         input: '0px 0.5px 0.75px rgba(49, 54, 44, 0.012)',
       },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
+      animation: {
+        marquee: 'marquee 30s linear infinite',
+      },
     },
   },
   plugins: [],
