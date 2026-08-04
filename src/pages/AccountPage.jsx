@@ -3,10 +3,12 @@ import Nav from '../components/layout/Nav'
 import Footer from '../components/layout/Footer'
 import EmptyState from '../components/ui/EmptyState'
 import StatusBadge from '../components/ui/StatusBadge'
+import SectionBanner from '../components/ui/SectionBanner'
 import { useAuth } from '../context/AuthContext'
 import { useOrders } from '../store/hooks'
 import { formatCurrency } from '../utils/formatCurrency'
 import { formatDate } from '../utils/formatDate'
+import { SECTION_BANNERS } from '../data/sectionBanners'
 
 const MENU = [
   { key: 'alamat', label: 'Alamat', icon: PinIcon },
@@ -29,9 +31,9 @@ export default function AccountPage() {
     <div>
       <Nav />
       <section className="mx-auto w-full max-w-6xl px-4 py-8 lg:py-12">
-        <h1 className="mb-6 text-2xl font-medium text-neutral-900 lg:mb-8">Akun Saya</h1>
+        <SectionBanner {...SECTION_BANNERS.account} />
 
-        <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+        <div className="mt-6 flex flex-col gap-6 lg:mt-8 lg:flex-row lg:gap-8">
           {/* Sidebar */}
           <aside className="lg:w-72 lg:shrink-0">
             <div className="flex flex-col gap-6 rounded-2xl border border-neutral-200 bg-neutral-0 p-5">

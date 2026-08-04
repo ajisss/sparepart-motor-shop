@@ -4,9 +4,11 @@ import Nav from '../components/layout/Nav'
 import Footer from '../components/layout/Footer'
 import OrderSummaryCard from '../components/order/OrderSummaryCard'
 import OrderTimeline from '../components/order/OrderTimeline'
+import SectionBanner from '../components/ui/SectionBanner'
 import { useOrder } from '../store/hooks'
 import { useAuth } from '../context/AuthContext'
 import { formatDate } from '../utils/formatDate'
+import { SECTION_BANNERS } from '../data/sectionBanners'
 
 export default function OrderDetailPage() {
   const { id } = useParams()
@@ -28,9 +30,12 @@ export default function OrderDetailPage() {
   return (
     <div>
       <Nav />
+      <div className="px-4 pt-6 lg:px-16 lg:pt-10">
+        <SectionBanner {...SECTION_BANNERS.orderDetail} />
+      </div>
       <section className="mx-auto flex w-full max-w-[720px] flex-col gap-6 px-4 py-8 lg:py-12">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-medium text-neutral-900 lg:text-2xl">Detail Pesanan</h1>
+          <h2 className="text-xl font-medium text-neutral-900 lg:text-2xl">Detail Pesanan</h2>
           <Link to={isOwner ? '/akun?tab=riwayat' : '/lacak'} className="text-sm text-neutral-600">
             ← Kembali
           </Link>
