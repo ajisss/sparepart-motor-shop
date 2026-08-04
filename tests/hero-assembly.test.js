@@ -6,6 +6,7 @@ import { inflateSync } from 'node:zlib'
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url))
 const assetPath = `${projectRoot}public/hero/generated-naked-street-bike.png`
+const componentPath = `${projectRoot}src/components/home/HeroAssemblySection.jsx`
 
 test('approved hero motorcycle is a 1672x941 RGBA PNG', () => {
   assert.equal(existsSync(assetPath), true, 'generated hero motorcycle is missing')
@@ -88,4 +89,35 @@ test('hero motorcycle has transparent corners and no visible chroma-green residu
   const coverage = visible / (width * height)
   assert.ok(coverage > 0.37 && coverage < 0.43, `unexpected subject coverage ${coverage}`)
   assert.equal(greenResidue, 0)
+})
+
+test('hero defines five assembly modules and three phone-safe modules', () => {
+  assert.equal(existsSync(componentPath), true, 'HeroAssemblySection component is missing')
+  const source = readFileSync(componentPath, 'utf8')
+  const partsBlock = source.match(/const PARTS = \[([\s\S]*?)\n\]/)?.[1] ?? ''
+  const definitions = partsBlock.match(/key: '(battery|ignition|headlamp|brake|exhaust)'/g) ?? []
+  const phoneSafe = partsBlock.match(/phone: true/g) ?? []
+
+  assert.equal(definitions.length, 5)
+  assert.equal(new Set(definitions).size, 5)
+  assert.equal(phoneSafe.length, 3)
+})
+
+test('hero preserves CTA routes and accessible image/decorative layers', () => {
+  const source = readFileSync(componentPath, 'utf8')
+
+  assert.match(source, /to="\/search"/)
+  assert.match(source, /to="\/lacak"/)
+  assert.match(source, /alt="Ilustrasi motor naked dengan sparepart DMB"/)
+  assert.match(source, /width="1672"/)
+  assert.match(source, /height="941"/)
+  assert.match(source, /fetchPriority="high"/)
+  assert.ok((source.match(/aria-hidden="true"/g) ?? []).length >= 2)
+})
+
+test('homepage renders the extracted hero and removes the savings starburst', () => {
+  const homepage = readFileSync(`${projectRoot}src/pages/HomePage.jsx`, 'utf8')
+
+  assert.match(homepage, /<HeroAssemblySection\s*\/>/)
+  assert.doesNotMatch(homepage, /StarburstBadge/)
 })

@@ -3,13 +3,14 @@ import Nav from '../components/layout/Nav'
 import Footer from '../components/layout/Footer'
 import ProductCard from '../components/ui/ProductCard'
 import Button from '../components/ui/Button'
+import HeroAssemblySection from '../components/home/HeroAssemblySection'
+import HowItWorksSection from '../components/home/HowItWorksSection'
 import { useHomepage, useProducts } from '../store/hooks'
 
 // Landing page — long-form section composition (announcement → hero → marquee →
 // product lines → product grid → how-it-works → CTA band → why → FAQ → trust →
 // footer), with DMB's own content as a motorcycle-parts MANUFACTURER (produsen),
-// black + yellow brand. Token-only, no new dependencies. Image areas use styled
-// placeholders until real photography is available.
+// black + yellow brand. Token-only, no new dependencies.
 
 const MARQUEE_ITEMS = [
   'Diproduksi Sendiri',
@@ -39,13 +40,6 @@ const PRODUCT_LINES = [
     cta: 'Lihat Aksesoris',
     href: '/search',
   },
-]
-
-const STEPS = [
-  { n: '01', title: 'Pilih sparepart', desc: 'Telusuri katalog per lini produk atau cari langsung part yang kamu butuhkan.' },
-  { n: '02', title: 'Checkout & bayar', desc: 'Isi alamat, pilih ekspedisi, bayar aman lewat simulasi Midtrans Snap.' },
-  { n: '03', title: 'Kami proses & kirim', desc: 'Pesanan disiapkan langsung dari gudang produsen, resi terbit otomatis.' },
-  { n: '04', title: 'Lacak sampai tiba', desc: 'Pantau status pesanan real-time dari halaman Lacak Pesanan atau akunmu.' },
 ]
 
 const WHY = [
@@ -88,53 +82,7 @@ export default function HomePage() {
 
       <Nav />
 
-      {/* Hero */}
-      <section className="px-4 pt-6 lg:px-16 lg:pt-8">
-        <div
-          className="relative mx-auto flex min-h-[520px] max-w-7xl items-center justify-center overflow-hidden rounded-2xl bg-neutral-900 px-6 py-20 lg:min-h-[600px] lg:py-28"
-          style={{
-            backgroundImage:
-              'radial-gradient(circle at 80% 10%, rgba(254,201,1,0.14), transparent 45%), radial-gradient(circle at 15% 90%, rgba(254,201,1,0.08), transparent 40%)',
-          }}
-        >
-          <div className="absolute right-6 top-6 hidden lg:block">
-            <StarburstBadge />
-          </div>
-
-          <div className="relative z-10 flex max-w-2xl flex-col items-center gap-6 text-center">
-            <span className="inline-flex items-center gap-2 rounded-pill border border-neutral-0/20 bg-neutral-0/10 px-3 py-1.5 text-sm text-neutral-0 backdrop-blur">
-              <span aria-hidden="true" className="size-1.5 rounded-full bg-secondary-600" />
-              Produsen sparepart motor · Bandung
-            </span>
-            <h1 className="text-4xl font-medium leading-[1.05] tracking-tight text-neutral-0 lg:text-6xl">
-              Sparepart motor original, <span className="text-secondary-600">bikinan sendiri</span>
-            </h1>
-            <p className="max-w-xl text-base text-neutral-200 lg:text-lg">
-              DMB memproduksi sparepart motor berkualitas — dari mesin, kelistrikan, sampai bodi &amp;
-              aksesoris. Langsung dari produsen ke tanganmu, dengan garansi keaslian.
-            </p>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Link to="/search">
-                <Button variant="accent" size="lg" className="w-full sm:w-auto">
-                  Belanja Sekarang
-                </Button>
-              </Link>
-              <Link to="/lacak">
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  className="w-full !border-neutral-0/40 !bg-transparent !text-neutral-0 hover:!bg-neutral-0/10 sm:w-auto"
-                >
-                  Lacak Pesanan
-                </Button>
-              </Link>
-            </div>
-            <p className="mt-2 text-xs uppercase tracking-[0.2em] text-neutral-400">
-              Didukung Midtrans &amp; Biteship
-            </p>
-          </div>
-        </div>
-      </section>
+      <HeroAssemblySection />
 
       {/* Marquee */}
       <div className="mt-16 lg:mt-24">
@@ -188,36 +136,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="bg-neutral-900 px-4 py-16 lg:px-16 lg:py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-14 flex flex-col items-center gap-3 text-center lg:mb-16">
-            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-secondary-600">
-              Cara Belanja
-            </span>
-            <h2 className="max-w-2xl text-3xl font-medium tracking-tight text-neutral-0 lg:text-5xl">
-              Dari cari part sampai depan pintu, dalam 4 langkah
-            </h2>
-          </div>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((s) => (
-              <div key={s.n} className="flex flex-col gap-4">
-                <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl border border-neutral-0/10 bg-neutral-0/5">
-                  <PlaceholderMark />
-                  <span className="absolute left-3 top-3 text-sm font-semibold text-secondary-600">{s.n}</span>
-                </div>
-                <h3 className="text-lg font-medium text-neutral-0">{s.title}</h3>
-                <p className="text-sm leading-relaxed text-neutral-400">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-14 flex justify-center">
-            <Link to="/search">
-              <Button variant="accent" size="lg">Mulai Belanja</Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HowItWorksSection />
 
       {/* CTA band */}
       <section className="relative overflow-hidden bg-secondary-600 px-4 py-20 text-center lg:px-16">
@@ -334,33 +253,6 @@ function Marquee() {
           </span>
         ))}
       </div>
-    </div>
-  )
-}
-
-// Neutral image placeholder mark, used until real photography is supplied.
-function PlaceholderMark({ large }) {
-  return (
-    <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-neutral-400">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={large ? 'size-9' : 'size-6'} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <rect x="3" y="4" width="18" height="16" rx="2" />
-        <circle cx="8.5" cy="9.5" r="1.5" />
-        <path d="M21 16l-5-5-6 6-3-3-4 4" />
-      </svg>
-      <span className="text-[10px] uppercase tracking-[0.2em]">Gambar</span>
-    </span>
-  )
-}
-
-function StarburstBadge() {
-  return (
-    <div className="relative flex size-24 items-center justify-center">
-      <span className="absolute inset-0 rounded-[28%] bg-secondary-600" />
-      <span className="absolute inset-0 rotate-45 rounded-[28%] bg-secondary-600" />
-      <span className="relative flex size-16 flex-col items-center justify-center rounded-full bg-neutral-900 text-center">
-        <span className="text-[10px] font-medium uppercase tracking-wide text-neutral-0">Hemat</span>
-        <span className="text-lg font-semibold leading-none text-secondary-600">50rb</span>
-      </span>
     </div>
   )
 }

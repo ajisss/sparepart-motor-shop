@@ -19,5 +19,5 @@ test('all seeded products use unique generated PNG assets', () => {
 })
 
 test('the store reseeds existing browsers after image mappings change', () => {
-  assert.equal(VERSION, 3)
+  assert.equal(VERSION, 5)
 })
