@@ -22,7 +22,7 @@ export default function Nav() {
   return (
     <header className="relative z-40 flex items-center justify-between border-b border-neutral-100 bg-neutral-0 px-4 py-4 lg:px-16">
       <Link to="/" aria-label="DMB Moto Shop — Beranda" className="flex items-center">
-        <img src={logo} alt="DMB Moto Shop" className="h-14 w-auto lg:h-16" />
+        <img src={logo} alt="DMB Moto Shop" className="h-10 w-auto lg:h-12" />
       </Link>
 
       <nav className="hidden items-center gap-6 text-xs font-medium uppercase tracking-[0.24px] text-neutral-900 lg:flex">

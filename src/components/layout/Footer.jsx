@@ -61,7 +61,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-14 lg:px-16 lg:py-16">
         {/* Top: logo + socials */}
         <div className="flex flex-col items-start justify-between gap-8 border-b border-neutral-0/10 pb-10 sm:flex-row sm:items-center">
-          <img src={logo} alt="DMB Moto Shop" className="h-16 w-auto" />
+          <img src={logo} alt="DMB Moto Shop" className="h-12 w-auto" />
           <div className="flex items-center gap-3">
             <span className="text-sm text-neutral-400">Ikuti kami</span>
             {SOCIALS.map((Icon, i) => (
