@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
     if (!user) return { ok: false, error: 'Email tidak ditemukan.' }
     // POC: any password is accepted.
     setCurrentUserId(user.id)
-    return { ok: true }
+    return { ok: true, user }
   }
 
   const loginWithGoogle = () => {
@@ -62,9 +62,11 @@ export function AuthProvider({ children }) {
 
   const logout = () => setCurrentUserId(null)
 
+  const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'owner'
+
   return (
     <AuthContext.Provider
-      value={{ currentUser, isLoggedIn: !!currentUser, login, loginWithGoogle, register, logout }}
+      value={{ currentUser, isLoggedIn: !!currentUser, isAdmin, login, loginWithGoogle, register, logout }}
     >
       {children}
     </AuthContext.Provider>

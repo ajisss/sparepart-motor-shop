@@ -1,0 +1,76 @@
+/*
+ * Admin surface theme — rebrand to DMB black + yellow identity.
+ * Palette aligned with src/styles/tokens.md (primary=black, secondary=#FEC901).
+ * Scoped under `.admin-theme` so the storefront theme is never affected.
+ */
+
+.admin-theme {
+  /* Primary — brand black (replaces forest green) */
+  --adm-forest-500: #000000; /* primary-600 */
+  --adm-forest-400: #262626; /* primary-700 hover */
+  --adm-forest-200: #71717A; /* neutral-600 */
+  --adm-mint: #FEC901;       /* secondary-600 brand yellow (replaces mint green) */
+
+  /* Neutrals */
+  --adm-bg: #f6f6f6;
+  --adm-card: #ffffff;
+  --adm-border: #e2e2e2;
+  --adm-border-strong: #d3d3d3;
+  --adm-muted: #a0a0a0;
+  --adm-text: #27272A;
+  --adm-ink: #000000;
+  --adm-white-600: #e8e8e8;
+
+  /* Semantics */
+  --adm-success: #0e8f21;
+  --adm-success-bg: #e7f4e9;
+  --adm-danger: #ff0013;
+  --adm-danger-bg: #ffe6e7;
+  --adm-warning: #ffaa33;
+  --adm-info: #0051ff;
+
+  /* Exact stock-status pill colors */
+  --adm-instock-bg: #e7f4e9;
+  --adm-instock-border: #b4dcba;
+  --adm-instock-text: #0e8f21;
+  --adm-lowstock-bg: #fff4e6;
+  --adm-lowstock-border: #ffdeb0;
+  --adm-lowstock-text: #ff9500;
+  --adm-outstock-bg: #ffe6e7;
+  --adm-outstock-border: #ffb3ba;
+  --adm-outstock-text: #ff0013;
+
+  /* Radius / shadow */
+  --adm-radius: 20px;
+  --adm-radius-sm: 12px;
+  --adm-shadow: 0 2px 4px rgba(39, 39, 39, 0.1);
+
+  font-family: 'Geist', system-ui, -apple-system, sans-serif;
+  color: var(--adm-ink);
+  background: var(--adm-bg);
+}
+
+/* Reusable primitives -------------------------------------------------- */
+
+.admin-theme .adm-card {
+  background: var(--adm-card);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius);
+  box-shadow: var(--adm-shadow);
+}
+
+.admin-theme .adm-stat-number {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--adm-ink);
+  line-height: 1.1;
+}
+
+/* Thin custom scrollbar for the sidebar */
+.admin-theme .adm-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.admin-theme .adm-scroll::-webkit-scrollbar-thumb {
+  background: var(--adm-border);
+  border-radius: 999px;
+}

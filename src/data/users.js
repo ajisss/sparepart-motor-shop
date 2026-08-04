@@ -1,5 +1,16 @@
 export const USERS = [
   {
+    id: 'u-admin',
+    name: 'Admin DMB',
+    email: 'admin@dmb.com',
+    phone: '081200000000',
+    password: 'admin123',
+    provider: 'password',
+    role: 'admin',
+    addresses: [],
+    defaultAddressId: null,
+  },
+  {
     id: 'u1',
     name: 'Budi Santoso',
     email: 'budi@dmb.com',

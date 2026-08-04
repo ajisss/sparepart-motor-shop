@@ -6,7 +6,7 @@ import { SHIPPING } from '../data/shipping.js'
 import { HOMEPAGE } from '../data/homepage.js'
 import { ORDERS } from '../data/orders.js'
 
-export const VERSION = 3
+export const VERSION = 5
 const STORAGE_KEY = 'dmb:data'
 
 export function buildSeed() {

@@ -49,9 +49,9 @@ const STEPS = [
 ]
 
 const WHY = [
-  { n: '01', title: 'Diproduksi & diuji sendiri' },
-  { n: '02', title: 'Harga langsung dari produsen' },
-  { n: '03', title: 'Cocok untuk banyak tipe motor' },
+  { n: '01', title: 'Diproduksi & diuji sendiri', img: 'https://images.unsplash.com/photo-1636761358757-0a616eb9e17e?fm=jpg&q=80&w=800&auto=format&fit=crop' },
+  { n: '02', title: 'Harga langsung dari produsen', img: 'https://images.unsplash.com/photo-1683455726905-02c1dfab349f?fm=jpg&q=80&w=800&auto=format&fit=crop' },
+  { n: '03', title: 'Cocok untuk banyak tipe motor', img: 'https://images.unsplash.com/photo-1780401531667-849222fb636b?fm=jpg&q=80&w=800&auto=format&fit=crop' },
 ]
 
 const FAQS = [
@@ -260,7 +260,7 @@ export default function HomePage() {
                 key={w.n}
                 className="group relative flex aspect-[4/5] items-end overflow-hidden rounded-2xl bg-neutral-100"
               >
-                <PlaceholderMark large />
+                <img src={w.img} alt={w.title} className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                 <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-neutral-900/85 via-neutral-900/20 to-transparent" />
                 <div className="relative z-10 flex flex-col gap-1 p-6">
                   <span className="text-sm font-semibold text-secondary-600">{w.n}</span>
