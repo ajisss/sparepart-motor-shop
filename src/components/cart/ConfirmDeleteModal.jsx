@@ -18,7 +18,7 @@ export default function ConfirmDeleteModal({ open, onConfirm, onCancel, itemLabe
           Yakin ingin menghapus {itemLabel ? <span className="font-medium text-neutral-900">{itemLabel}</span> : 'produk ini'} dari keranjang?
         </p>
         <div className="mt-2 flex items-center gap-3">
-          <Button variant="primary" onClick={onConfirm} className="!bg-red-500 hover:!bg-red-600">
+          <Button variant="danger" onClick={onConfirm}>
             Hapus
           </Button>
           <Button variant="secondary" onClick={onCancel}>

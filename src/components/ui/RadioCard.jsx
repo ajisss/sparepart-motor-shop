@@ -4,7 +4,7 @@ export default function RadioCard({ selected, onSelect, title, subtitle, right, 
       type="button"
       onClick={disabled ? undefined : onSelect}
       disabled={disabled}
-      className={`flex w-full items-center gap-3 rounded-md border p-4 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+      className={`flex w-full items-center gap-3 rounded-md border p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 ${
         selected ? 'border-primary-600 bg-primary-25' : 'border-neutral-200 bg-neutral-0 hover:bg-neutral-25'
       }`}
     >

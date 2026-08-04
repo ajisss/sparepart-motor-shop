@@ -162,7 +162,7 @@ export default function ProductDetailPage() {
             <div className="flex flex-1 gap-3">
               <Button
                 variant="secondary"
-                className="flex-1"
+                className="flex-1 whitespace-nowrap"
                 onClick={handleAddToCart}
                 disabled={!hasStock}
               >
@@ -170,7 +170,7 @@ export default function ProductDetailPage() {
               </Button>
               <Button
                 variant="primary"
-                className="flex-1"
+                className="flex-1 whitespace-nowrap"
                 onClick={handleBuyNow}
                 disabled={!hasStock}
               >
