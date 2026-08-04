@@ -10,6 +10,9 @@ export default function Button({ variant = 'primary', size = 'md', children, cla
     primary: 'bg-primary-600 text-neutral-0 hover:bg-primary-700',
     secondary:
       'bg-neutral-0 text-neutral-900 border border-neutral-200 hover:bg-neutral-50',
+    // Yellow accent — use for the main CTA on dark/black surfaces where a black
+    // primary button would have no contrast.
+    accent: 'bg-secondary-600 text-neutral-900 hover:bg-secondary-700',
     danger: 'bg-error text-neutral-0 hover:bg-error/90',
     ghost: 'bg-transparent text-neutral-700 hover:bg-neutral-50',
   }

@@ -48,7 +48,7 @@ export default function HomePage() {
         <div className="relative z-10 flex flex-col items-center gap-12 lg:flex-row lg:items-center">
           <div className="flex w-full flex-1 flex-col items-start gap-6 text-left">
             <div className="flex items-center gap-3 rounded-md border border-neutral-0/20 bg-neutral-0/10 px-3 py-1.5 backdrop-blur">
-              <span aria-hidden="true" className="size-1 rounded-full bg-primary-200" />
+              <span aria-hidden="true" className="size-1.5 rounded-full bg-secondary-600" />
               <span className="text-sm text-neutral-0">Sparepart original, siap kirim hari ini</span>
             </div>
             <h1 className="max-w-xl text-3xl font-medium leading-tight tracking-tight text-neutral-0 lg:text-5xl">
@@ -57,7 +57,7 @@ export default function HomePage() {
             <p className="max-w-md text-neutral-200">{subtext}</p>
             <div className="flex flex-wrap items-center gap-3">
               <Link to={ctaHref}>
-                <Button variant="primary">{ctaLabel}</Button>
+                <Button variant="accent">{ctaLabel}</Button>
               </Link>
               <a href="#kategori">
                 <Button

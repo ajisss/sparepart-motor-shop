@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import Button from '../components/ui/Button'
 import { GoogleIcon, EyeIcon } from '../components/auth/AuthIcons'
 import AuthHeroPanel from '../components/auth/AuthHeroPanel'
+import logo from '../assets/logo-dmb.png'
 
 export default function LoginPage() {
   const { login, loginWithGoogle } = useAuth()
@@ -45,7 +46,7 @@ export default function LoginPage() {
         {/* Form panel */}
         <div className="flex w-full flex-col justify-center gap-6 lg:w-[468px] lg:p-8">
           <div className="flex flex-col items-center gap-2 text-center lg:items-start lg:text-left">
-            <span className="mb-2 text-lg font-semibold text-neutral-900 lg:hidden">DMB Moto Shop</span>
+            <img src={logo} alt="DMB Moto Shop" className="mb-2 h-12 w-auto lg:hidden" />
             <h1 className="text-2xl font-semibold tracking-tight text-neutral-900 lg:text-[28px]">
               Selamat datang kembali!
             </h1>

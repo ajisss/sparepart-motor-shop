@@ -3,6 +3,7 @@ import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import searchIcon from '../../assets/nav/search-icon.svg'
 import cartIcon from '../../assets/nav/cart-icon.svg'
+import logo from '../../assets/logo-dmb.png'
 
 export default function Nav() {
   const { itemCount } = useCart()
@@ -11,8 +12,8 @@ export default function Nav() {
 
   return (
     <header className="flex items-center justify-between px-4 lg:px-16 py-4 border-b border-neutral-100 bg-neutral-0">
-      <Link to="/" className="font-medium text-lg text-neutral-900">
-        DMB Moto Shop
+      <Link to="/" aria-label="DMB Moto Shop — Beranda" className="flex items-center">
+        <img src={logo} alt="DMB Moto Shop" className="h-11 w-auto lg:h-12" />
       </Link>
       <nav className="hidden lg:flex items-center gap-6 text-xs font-medium uppercase tracking-[0.24px] text-neutral-900">
         <Link to="/">Home</Link>

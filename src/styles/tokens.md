@@ -5,38 +5,57 @@ Extracted via `mcp__plugin_figma_figma__get_variable_defs` (primary source) and
 `mcp__plugin_figma_figma__get_design_context` on sub-nodes (button, product card)
 for values not exposed as variables (border radius, shadow).
 
-These are the literal values returned by Figma — do not invent additional shades
-or semantic colors that aren't listed here. Later tasks should reference this file
-instead of hard-coding hex values.
+Reference this file instead of hard-coding hex values.
 
-## Primary (brand green) — `Primary/*` variables
+> **Rebrand (2026-08):** the palette moved from the original Figma green to the
+> DMB **black + yellow** motorsport identity. Primary = black (actions, emphasis,
+> dark surfaces); Secondary = yellow `#FEC901` (accents: ratings, active chips,
+> badges, highlights on dark surfaces). Neutrals were de-tinted to pure grey.
+
+## Primary (brand black) — actions, emphasis, dark surfaces
+
+Strong shades (600–900) are black; light shades (25–300) are near-neutral greys
+for subtle surfaces/borders.
 
 | Token | Hex |
 |---|---|
-| primary-25 | #F7FEE7 |
-| primary-100 | #D8F999 |
-| primary-200 | #BBF451 |
-| primary-600 (base) | #497D00 |
-| primary-700 | #3C6300 |
-| primary-800 | #35530E |
-| primary-900 | #192E03 |
+| primary-25 | #F4F4F5 |
+| primary-100 | #E4E4E7 |
+| primary-200 | #D4D4D8 |
+| primary-300 | #A1A1AA |
+| primary-600 (base) | #000000 |
+| primary-700 (hover) | #262626 |
+| primary-800 | #171717 |
+| primary-900 | #000000 |
 
-Note: Figma only defines the shades above (25, 100, 200, 600, 700, 800, 900).
-Shades 50/300/400/500 are not defined in the source file — do not fabricate them;
-if a task needs an in-between shade, prefer the nearest defined one.
+## Secondary (brand yellow `#FEC901`) — accents
 
-## Greyscale / Neutral — `Greyscale/*` variables
+Yellow is illegible as text on white; use it as a background (with dark text),
+as accent marks (rating stars), or as text/fills on dark surfaces. `secondary-800`
+is a dark amber for legible text on light-yellow backgrounds.
+
+| Token | Hex |
+|---|---|
+| secondary-25 | #FFFDF0 |
+| secondary-100 | #FFF3C4 |
+| secondary-200 | #FFE885 |
+| secondary-600 (base) | #FEC901 |
+| secondary-700 (hover) | #E5B400 |
+| secondary-800 (text) | #8A6D00 |
+| secondary-900 | #4D3D00 |
+
+## Greyscale / Neutral (pure grey, no colour cast)
 
 | Token | Hex |
 |---|---|
 | neutral-0 | #FFFFFF |
-| neutral-25 | #F9F9F9 |
-| neutral-50 | #F3F4F2 |
-| neutral-100 | #E7E9E5 |
-| neutral-200 | #CFD3CC |
-| neutral-600 | #707A66 |
-| neutral-800 | #404D33 |
-| neutral-900 | #102100 |
+| neutral-25 | #FAFAFA |
+| neutral-50 | #F4F4F5 |
+| neutral-100 | #E4E4E7 |
+| neutral-200 | #D4D4D8 |
+| neutral-600 | #71717A |
+| neutral-800 | #27272A |
+| neutral-900 | #0A0A0A |
 
 ## Success / Error
 

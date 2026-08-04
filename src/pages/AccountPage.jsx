@@ -92,7 +92,7 @@ function AddressTab({ user }) {
           <div className="flex items-center gap-2">
             <span className="font-medium text-neutral-900">{a.recipientName}</span>
             {a.id === user.defaultAddressId && (
-              <span className="rounded-pill bg-primary-100 px-2 py-0.5 text-xs text-primary-800">Default</span>
+              <span className="rounded-pill bg-secondary-100 px-2 py-0.5 text-xs font-medium text-secondary-800">Default</span>
             )}
           </div>
           <p className="text-neutral-500">{a.phone}</p>

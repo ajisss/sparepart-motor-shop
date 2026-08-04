@@ -128,7 +128,7 @@ export default function ProductDetailPage() {
             <span
               className={`rounded-pill px-4 py-1 text-xs font-medium uppercase tracking-[0.18px] ${
                 hasStock
-                  ? 'bg-primary-100 text-primary-900'
+                  ? 'bg-secondary-100 text-secondary-800'
                   : 'bg-neutral-100 text-neutral-600'
               }`}
             >
@@ -146,7 +146,7 @@ export default function ProductDetailPage() {
               <h3 className="mb-2 text-sm font-medium text-neutral-900">Kompatibel dengan:</h3>
               <ul className="flex flex-wrap gap-2">
                 {product.compatibleWith.map((m) => (
-                  <li key={m} className="rounded-md bg-primary-25 px-2.5 py-1.5 text-xs font-medium text-primary-800">
+                  <li key={m} className="rounded-md bg-secondary-25 px-2.5 py-1.5 text-xs font-medium text-secondary-800">
                     {m}
                   </li>
                 ))}

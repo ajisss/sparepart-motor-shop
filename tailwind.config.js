@@ -4,28 +4,43 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Brand green scale — see src/styles/tokens.md (Figma `Primary/*` variables).
-        // Only the shades below are defined in Figma; do not add 50/300/400/500.
+        // Brand primary — BLACK ramp (see src/styles/tokens.md). Strong shades
+        // (600–900) are black; light shades (25–300) are near-neutral greys used
+        // for subtle surfaces/borders. Primary = actions, emphasis, dark surfaces.
         primary: {
-          25: '#F7FEE7',
-          100: '#D8F999',
-          200: '#BBF451',
-          600: '#497D00',
-          700: '#3C6300',
-          800: '#35530E',
-          900: '#192E03',
-          DEFAULT: '#497D00',
+          25: '#F4F4F5',
+          100: '#E4E4E7',
+          200: '#D4D4D8',
+          300: '#A1A1AA',
+          600: '#000000',
+          700: '#262626',
+          800: '#171717',
+          900: '#000000',
+          DEFAULT: '#000000',
         },
-        // Neutral scale — see src/styles/tokens.md (Figma `Greyscale/*` variables).
+        // Brand secondary — YELLOW accent ramp (#FEC901). Used for highlights:
+        // ratings, active chips, badges, accents on dark surfaces. `secondary-800`
+        // is a dark amber for legible text on light-yellow backgrounds.
+        secondary: {
+          25: '#FFFDF0',
+          100: '#FFF3C4',
+          200: '#FFE885',
+          600: '#FEC901',
+          700: '#E5B400',
+          800: '#8A6D00',
+          900: '#4D3D00',
+          DEFAULT: '#FEC901',
+        },
+        // Neutral greyscale (pure grey — no colour cast).
         neutral: {
           0: '#FFFFFF',
-          25: '#F9F9F9',
-          50: '#F3F4F2',
-          100: '#E7E9E5',
-          200: '#CFD3CC',
-          600: '#707A66',
-          800: '#404D33',
-          900: '#102100',
+          25: '#FAFAFA',
+          50: '#F4F4F5',
+          100: '#E4E4E7',
+          200: '#D4D4D8',
+          600: '#71717A',
+          800: '#27272A',
+          900: '#0A0A0A',
         },
         success: '#16A34A',
         error: '#DC2626',

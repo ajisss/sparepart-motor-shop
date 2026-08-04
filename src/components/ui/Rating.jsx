@@ -5,7 +5,7 @@ export default function Rating({ value, reviewCount }) {
       <span className="font-semibold text-neutral-900">{value.toFixed(1)}</span>
       <span aria-hidden className="flex text-sm leading-none">
         {[1, 2, 3, 4, 5].map((i) => (
-          <span key={i} className={i <= filled ? 'text-primary-800' : 'text-neutral-200'}>
+          <span key={i} className={i <= filled ? 'text-secondary-600' : 'text-neutral-200'}>
             ★
           </span>
         ))}
