@@ -137,3 +137,19 @@ test('hero styles include approved timing, phone pruning, and reduced-motion com
   assert.match(styles, /prefers-reduced-motion:\s*reduce/)
   assert.match(styles, /\.assembly-hero__surface\.is-fallback/)
 })
+
+test('hero reserves separate copy and visual zones at narrow breakpoints', () => {
+  const styles = readFileSync(`${projectRoot}src/index.css`, 'utf8')
+
+  assert.match(styles, /\.assembly-hero__stage\s*\{[^}]*height:\s*300px/s)
+  assert.match(styles, /@media \(min-width:\s*640px\)[\s\S]*\.assembly-hero__stage\s*\{\s*height:\s*430px;/)
+  assert.match(styles, /\.assembly-part--battery\s*\{\s*top:\s*62px;/)
+  assert.match(styles, /\.assembly-part--ignition\s*\{\s*top:\s*80px;/)
+})
+
+test('desktop hero keeps the full motorcycle below the copy zone', () => {
+  const styles = readFileSync(`${projectRoot}src/index.css`, 'utf8')
+
+  assert.match(styles, /\.assembly-hero__copy\s*\{\s*padding-top:\s*clamp\(3rem,\s*5vh,\s*4rem\);\s*gap:\s*1rem;/)
+  assert.match(styles, /\.assembly-hero__bike-wrap\s*\{\s*bottom:\s*-20px;\s*width:\s*68%;/)
+})
