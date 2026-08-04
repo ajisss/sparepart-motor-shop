@@ -399,28 +399,24 @@ function ChatIcon() {
   )
 }
 
-// Decorative sparepart-themed vector ornaments for the CTA band background.
-// Dark shapes at low opacity — behind the content, non-interactive.
+// Decorative, automotive-themed vector accents for the CTA band background.
+// Two large, deliberate shapes (a gear + a tachometer) bleeding off opposite
+// corners — kept minimal and very low opacity so the content stays dominant.
 function CtaOrnaments() {
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden text-neutral-900">
-      <Gear teeth={10} className="absolute -left-12 -top-12 size-44 opacity-[0.07]" />
-      <Gear teeth={14} className="absolute -bottom-20 left-10 size-64 opacity-[0.05]" />
-      <Gear teeth={9} className="absolute right-1/4 -top-16 size-32 opacity-[0.06]" />
-      <HexNut className="absolute right-10 top-10 size-16 rotate-12 opacity-[0.09]" />
-      <HexNut className="absolute left-8 bottom-10 size-10 -rotate-6 opacity-[0.08]" />
-      <Wrench className="absolute -right-4 -bottom-6 size-48 -rotate-12 opacity-[0.07]" />
-      <Chain className="absolute right-16 bottom-16 w-40 opacity-[0.06]" />
+      <Gear teeth={12} className="absolute -bottom-24 -left-20 size-72 opacity-[0.06] lg:size-80" />
+      <Tachometer className="absolute -right-16 -top-16 size-72 opacity-[0.07] lg:size-80" />
     </div>
   )
 }
 
-function Gear({ teeth = 10, className = '' }) {
+function Gear({ teeth = 12, className = '' }) {
   const angles = Array.from({ length: teeth }, (_, i) => (i * 360) / teeth)
   return (
     <svg viewBox="0 0 100 100" className={className} fill="none" stroke="currentColor" aria-hidden="true">
       {angles.map((a, i) => (
-        <rect key={i} x="46" y="3" width="8" height="16" rx="2" fill="currentColor" transform={`rotate(${a} 50 50)`} />
+        <rect key={i} x="46" y="3" width="8" height="15" rx="2" fill="currentColor" transform={`rotate(${a} 50 50)`} />
       ))}
       <circle cx="50" cy="50" r="30" strokeWidth="7" />
       <circle cx="50" cy="50" r="12" strokeWidth="6" />
@@ -428,30 +424,24 @@ function Gear({ teeth = 10, className = '' }) {
   )
 }
 
-function HexNut({ className = '' }) {
+// Stylized tachometer / rev counter — a 270° arc with tick marks and a needle.
+function Tachometer({ className = '' }) {
+  const rad = (deg) => (deg * Math.PI) / 180
+  const pt = (deg, r) => [100 + r * Math.cos(rad(deg)), 100 - r * Math.sin(rad(deg))]
+  const ticks = Array.from({ length: 11 }, (_, i) => 225 - i * 27) // 225° over the top to -45°
+  const [ax, ay] = pt(225, 86)
+  const [bx, by] = pt(-45, 86)
+  const [nx, ny] = pt(63, 58) // needle tip (upper-right / high revs)
   return (
-    <svg viewBox="0 0 100 100" className={className} fill="none" stroke="currentColor" strokeWidth="7" strokeLinejoin="round" aria-hidden="true">
-      <polygon points="50,6 89,28 89,72 50,94 11,72 11,28" />
-      <circle cx="50" cy="50" r="18" />
-    </svg>
-  )
-}
-
-function Wrench({ className = '' }) {
-  return (
-    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" />
-    </svg>
-  )
-}
-
-function Chain({ className = '' }) {
-  return (
-    <svg viewBox="0 0 120 34" className={className} fill="none" stroke="currentColor" strokeWidth="4" aria-hidden="true">
-      <rect x="3" y="7" width="30" height="20" rx="10" />
-      <rect x="27" y="7" width="30" height="20" rx="10" />
-      <rect x="51" y="7" width="30" height="20" rx="10" />
-      <rect x="75" y="7" width="30" height="20" rx="10" />
+    <svg viewBox="0 0 200 200" className={className} fill="none" stroke="currentColor" strokeLinecap="round" aria-hidden="true">
+      <path d={`M${ax} ${ay} A86 86 0 1 1 ${bx} ${by}`} strokeWidth="4" />
+      {ticks.map((a, i) => {
+        const [x1, y1] = pt(a, 72)
+        const [x2, y2] = pt(a, 86)
+        return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth={i >= 8 ? 6 : 3} />
+      })}
+      <line x1="100" y1="100" x2={nx} y2={ny} strokeWidth="6" />
+      <circle cx="100" cy="100" r="9" fill="currentColor" stroke="none" />
     </svg>
   )
 }
