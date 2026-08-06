@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import Nav from '../components/layout/Nav'
 import Footer from '../components/layout/Footer'
-import Rating from '../components/ui/Rating'
 import PriceTag from '../components/ui/PriceTag'
 import QuantitySelector from '../components/ui/QuantitySelector'
 import Button from '../components/ui/Button'
@@ -83,26 +82,6 @@ export default function ProductDetailPage() {
               />
             </div>
           )}
-
-          <div className="flex flex-col gap-3">
-            <h3 className="text-base font-semibold text-neutral-900">Ulasan Pelanggan</h3>
-            {product.testimonials.length === 0 ? (
-              <p className="text-sm text-neutral-600">Belum ada ulasan.</p>
-            ) : (
-              <ul className="flex flex-col gap-3">
-                {product.testimonials.map((t) => (
-                  <li key={t.id} className="rounded-md border border-neutral-100 p-4">
-                    <div className="mb-1 flex items-center justify-between">
-                      <span className="text-sm font-medium text-neutral-900">{t.author}</span>
-                      <span className="text-xs text-neutral-600">{t.date}</span>
-                    </div>
-                    <Rating value={t.rating} />
-                    <p className="mt-1 text-sm text-neutral-600">{t.text}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
         </div>
 
         {/* Info */}
@@ -160,10 +139,6 @@ export default function ProductDetailPage() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-neutral-100" />
-
-          <Rating value={product.rating} reviewCount={product.reviewCount} />
-
           {CATALOG_ONLY ? (
             <a
               href={waHref}

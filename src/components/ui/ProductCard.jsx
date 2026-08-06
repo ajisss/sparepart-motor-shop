@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import PriceTag from './PriceTag'
-import Rating from './Rating'
 
 export default function ProductCard({ product }) {
   return (
@@ -20,7 +19,6 @@ export default function ProductCard({ product }) {
         />
       </div>
       <div className="flex flex-col gap-3">
-        <Rating value={product.rating} reviewCount={product.reviewCount} />
         <div className="flex flex-col gap-2">
           <span className="text-xs text-neutral-600">{product.brand}</span>
           <h3 className="text-lg font-semibold leading-tight tracking-tight text-neutral-900 line-clamp-2">
