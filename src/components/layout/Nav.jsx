@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ChatCircleText, PaperPlaneTilt } from '@phosphor-icons/react'
+import { CATALOG_ONLY } from '../../config/features'
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import { useChat } from '../../context/ChatContext'
@@ -157,7 +158,7 @@ export default function Nav({ overlay = false }) {
           </div>
         </div>
 
-        <Link to="/lacak">Lacak Pesanan</Link>
+        {!CATALOG_ONLY && <Link to="/lacak">Lacak Pesanan</Link>}
       </nav>
 
       <div className="flex items-center gap-4">
@@ -165,6 +166,9 @@ export default function Nav({ overlay = false }) {
           <img src={searchIcon} alt="" className={`size-full ${onDark ? 'invert' : ''}`} />
         </Link>
 
+        {/* Cart, inbox, and login are hidden during the catalog-only phase. */}
+        {!CATALOG_ONLY && (
+          <>
         {/* Cart + mini-cart popup */}
         <div className="relative" ref={cartRef}>
           <button
@@ -327,6 +331,8 @@ export default function Nav({ overlay = false }) {
           <Link to="/login" className={`text-sm ${subLink}`}>
             Login
           </Link>
+        )}
+          </>
         )}
       </div>
     </header>

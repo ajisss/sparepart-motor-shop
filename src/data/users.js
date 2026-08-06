@@ -1,15 +1,7 @@
+// NOTE: the admin/owner account is intentionally NOT seeded here. It is
+// provisioned from env vars in AuthContext and only exists in the admin build,
+// so admin credentials never ship in the public storefront bundle.
 export const USERS = [
-  {
-    id: 'u-admin',
-    name: 'Admin DMB',
-    email: 'admin@dmb.com',
-    phone: '081200000000',
-    password: 'admin123',
-    provider: 'password',
-    role: 'admin',
-    addresses: [],
-    defaultAddressId: null,
-  },
   {
     id: 'u1',
     name: 'Budi Santoso',

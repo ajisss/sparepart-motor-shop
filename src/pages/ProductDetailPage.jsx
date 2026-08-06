@@ -10,6 +10,8 @@ import EmptyState from '../components/ui/EmptyState'
 import Carousel from '../components/ui/Carousel'
 import { useCart } from '../context/CartContext'
 import { useProduct, useCategories } from '../store/hooks'
+import { CATALOG_ONLY, STORE_WHATSAPP } from '../config/features'
+import { WhatsappLogo } from '@phosphor-icons/react'
 
 function toEmbedUrl(url) {
   const match = url.match(/[?&]v=([^&]+)/)
@@ -44,6 +46,11 @@ export default function ProductDetailPage() {
 
   const category = categories.find((c) => c.id === product.category)
   const hasStock = product.stock > 0
+
+  // Catalog-only phase: no cart/checkout, funnel enquiries to WhatsApp.
+  const waHref = `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(
+    `Halo, saya ingin bertanya tentang produk "${product.name}".`,
+  )}`
 
   const handleAddToCart = () => {
     addItem(product.id, qty)
@@ -157,27 +164,39 @@ export default function ProductDetailPage() {
 
           <Rating value={product.rating} reviewCount={product.reviewCount} />
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <QuantitySelector value={qty} min={1} max={hasStock ? product.stock : 1} onChange={setQty} />
-            <div className="flex flex-1 gap-3">
-              <Button
-                variant="secondary"
-                className="flex-1 whitespace-nowrap"
-                onClick={handleAddToCart}
-                disabled={!hasStock}
-              >
-                {added ? 'Ditambahkan ✓' : 'Tambah ke Keranjang'}
-              </Button>
-              <Button
-                variant="primary"
-                className="flex-1 whitespace-nowrap"
-                onClick={handleBuyNow}
-                disabled={!hasStock}
-              >
-                Checkout Sekarang
-              </Button>
+          {CATALOG_ONLY ? (
+            <a
+              href={waHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-pill bg-primary-600 px-6 py-3 text-base font-medium text-neutral-0 transition-colors hover:bg-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2 sm:w-auto"
+            >
+              <WhatsappLogo size={20} weight="fill" />
+              Hubungi Kami
+            </a>
+          ) : (
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <QuantitySelector value={qty} min={1} max={hasStock ? product.stock : 1} onChange={setQty} />
+              <div className="flex flex-1 gap-3">
+                <Button
+                  variant="secondary"
+                  className="flex-1 whitespace-nowrap"
+                  onClick={handleAddToCart}
+                  disabled={!hasStock}
+                >
+                  {added ? 'Ditambahkan ✓' : 'Tambah ke Keranjang'}
+                </Button>
+                <Button
+                  variant="primary"
+                  className="flex-1 whitespace-nowrap"
+                  onClick={handleBuyNow}
+                  disabled={!hasStock}
+                >
+                  Checkout Sekarang
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 

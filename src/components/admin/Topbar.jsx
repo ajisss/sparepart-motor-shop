@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { MagnifyingGlass, Bell, CaretDown, SignOut, X } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext'
 import { useStore } from '../../store/StoreProvider'
+import { ADMIN_LOGIN_SLUG } from '../../config/features'
 import dmbLogo from '../../assets/logo-dmb.png'
 import NotificationPanel from './NotificationPanel'
 import SearchModal from './SearchModal'
@@ -95,7 +96,7 @@ export default function Topbar() {
     setShowLogout(false)
     setOpen(false)
     logout()
-    navigate('/admin/login')
+    navigate(`/admin/${ADMIN_LOGIN_SLUG}`)
   }
 
   return (

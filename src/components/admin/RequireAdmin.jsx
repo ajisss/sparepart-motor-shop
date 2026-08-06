@@ -1,11 +1,15 @@
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { ADMIN_LOGIN_SLUG } from '../../config/features'
 
 // SP4: gate for /admin/* — logged-out → login; logged-in non-admin → denied.
 export default function RequireAdmin({ children }) {
   const { isLoggedIn, isAdmin } = useAuth()
 
-  if (!isLoggedIn) return <Navigate to="/admin/login" replace state={{ from: '/admin' }} />
+  // Logged-out visitors go to the secret sign-in slug. The admin app runs on
+  // its own deployment behind Deployment Protection, so there's no public to
+  // hide the panel from here — the platform gate already did that.
+  if (!isLoggedIn) return <Navigate to={`/admin/${ADMIN_LOGIN_SLUG}`} replace />
 
   if (!isAdmin) {
     return (

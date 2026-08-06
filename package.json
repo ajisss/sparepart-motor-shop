@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:admin": "VITE_APP_TARGET=admin vite",
     "build": "vite build",
+    "build:admin": "VITE_APP_TARGET=admin vite build",
     "lint": "oxlint",
     "test": "node --test",
     "preview": "vite preview"

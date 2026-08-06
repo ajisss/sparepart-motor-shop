@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '../ui/Button'
+import { CATALOG_ONLY } from '../../config/features'
 
 const PARTS = [
   { key: 'battery', label: 'BATTERY', code: 'ELC.01', phone: true, className: 'assembly-part--battery', path: 'M5 10h30v22H5zM11 6v4m18-4v4M10 16h8m-4-4v8m9-4h8' },
@@ -46,11 +47,13 @@ export default function HeroAssemblySection() {
             <Link to="/search">
               <Button variant="accent" size="lg" className="w-full sm:w-auto">Belanja Sekarang</Button>
             </Link>
-            <Link to="/lacak">
-              <Button variant="secondary" size="lg" className="w-full !border-neutral-0/40 !bg-transparent !text-neutral-0 hover:!bg-neutral-0/10 sm:w-auto">
-                Lacak Pesanan
-              </Button>
-            </Link>
+            {!CATALOG_ONLY && (
+              <Link to="/lacak">
+                <Button variant="secondary" size="lg" className="w-full !border-neutral-0/40 !bg-transparent !text-neutral-0 hover:!bg-neutral-0/10 sm:w-auto">
+                  Lacak Pesanan
+                </Button>
+              </Link>
+            )}
           </div>
           <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">Didukung Midtrans &amp; Biteship</p>
         </div>

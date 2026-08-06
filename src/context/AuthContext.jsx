@@ -14,8 +14,36 @@ const GOOGLE_USER = {
   defaultAddressId: null,
 }
 
+// The admin/owner account is provisioned from env vars set ONLY on the
+// protected admin deployment — its credentials never ship in the public
+// storefront bundle. The dev-only fallback keeps `npm run dev:admin` working
+// locally and is compiled out of production builds (import.meta.env.DEV is
+// false there, so the string literals are dead-code eliminated).
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || (import.meta.env.DEV ? 'admin@dmb.com' : '')
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || (import.meta.env.DEV ? 'admin123' : '')
+const ADMIN_USER =
+  ADMIN_EMAIL && ADMIN_PASSWORD
+    ? {
+        id: 'u-admin',
+        name: 'Admin DMB',
+        email: ADMIN_EMAIL,
+        phone: '',
+        password: ADMIN_PASSWORD,
+        provider: 'password',
+        role: 'admin',
+        addresses: [],
+        defaultAddressId: null,
+      }
+    : null
+
 export function AuthProvider({ children }) {
-  const { users, addUser } = useStore()
+  const { users: storeUsers, addUser } = useStore()
+  // Admin lives only in the auth layer (never persisted to the store), and
+  // only when provisioned — so the public build's user list has no admin.
+  const users =
+    ADMIN_USER && !storeUsers.some((u) => u.id === ADMIN_USER.id)
+      ? [...storeUsers, ADMIN_USER]
+      : storeUsers
 
   const [currentUserId, setCurrentUserId] = useState(() => localStorage.getItem('dmb:auth') || null)
 
@@ -29,7 +57,9 @@ export function AuthProvider({ children }) {
   const login = (email, password) => {
     const user = users.find((u) => u.email.toLowerCase() === String(email).toLowerCase())
     if (!user) return { ok: false, error: 'Email tidak ditemukan.' }
-    // POC: any password is accepted.
+    if (!user.password || String(password) !== String(user.password)) {
+      return { ok: false, error: 'Password salah.' }
+    }
     setCurrentUserId(user.id)
     return { ok: true, user }
   }
