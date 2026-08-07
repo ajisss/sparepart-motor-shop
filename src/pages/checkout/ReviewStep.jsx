@@ -16,7 +16,7 @@ export default function ReviewStep({
   promoError,
 }) {
   const { items, subtotal } = useCart()
-  const products = useProducts()
+  const { products } = useProducts()
 
   const rows = items
     .map((i) => ({ ...i, product: products.find((p) => p.id === i.productId) }))

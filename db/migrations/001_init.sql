@@ -13,7 +13,6 @@ create table if not exists products (
   brand          text,
   category_id    text references categories(id),
   price          int  not null,
-  stock          int  not null default 0,
   description    text,
   video_url      text,
   published      boolean not null default true,

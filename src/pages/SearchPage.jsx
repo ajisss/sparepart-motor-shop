@@ -29,8 +29,8 @@ const SORT_OPTIONS = [
 // components rather than the dropdown filters, matching the actual layout
 // direction (horizontal, full-width) at both breakpoints.
 export default function SearchPage() {
-  const allProducts = useProducts()
-  const categories = useCategories()
+  const { products: allProducts, loading } = useProducts()
+  const { categories } = useCategories()
   const [params, setParams] = useSearchParams()
   const activeCategory = params.get('category')
 
@@ -137,7 +137,9 @@ export default function SearchPage() {
       </section>
 
       <section className="px-4 pb-16 lg:px-16">
-        {results.length === 0 ? (
+        {loading ? (
+          <p className="py-12 text-center text-neutral-600">Memuat…</p>
+        ) : results.length === 0 ? (
           <EmptyState
             title="Produk tidak ditemukan"
             description="Coba kata kunci atau kategori lain."

@@ -11,7 +11,6 @@ export function shapeProduct(row, images = [], compat = []) {
     brand: row.brand,
     category: row.category_id,
     price: row.price,
-    stock: row.stock,
     description: row.description,
     videoUrl: row.video_url,
     published: row.published,
@@ -40,7 +39,6 @@ export function validateProductInput(data) {
     brand: data.brand ?? null,
     category: String(data.category),
     price: data.price,
-    stock: Number(data.stock ?? 0),
     description: data.description ?? null,
     videoUrl: data.videoUrl ?? null,
     published: data.published ?? true,
@@ -105,8 +103,8 @@ export async function createProduct(sql, v) {
   const id = v.id || v.sku.toLowerCase()
   await sql.transaction([
     sql`insert into products
-      (id, sku, name, slug, brand, category_id, price, stock, description, video_url, published, is_featured, featured_order)
-      values (${id}, ${v.sku}, ${v.name}, ${v.slug}, ${v.brand}, ${v.category}, ${v.price}, ${v.stock},
+      (id, sku, name, slug, brand, category_id, price, description, video_url, published, is_featured, featured_order)
+      values (${id}, ${v.sku}, ${v.name}, ${v.slug}, ${v.brand}, ${v.category}, ${v.price},
               ${v.description}, ${v.videoUrl}, ${v.published}, ${v.isFeatured}, ${v.featuredOrder})`,
     ...childStatements(sql, id, v.images, v.compatibleWith),
   ])
@@ -116,7 +114,7 @@ export async function createProduct(sql, v) {
 export async function updateProduct(sql, id, v) {
   const rows = await sql`update products set
     sku = ${v.sku}, name = ${v.name}, slug = ${v.slug}, brand = ${v.brand},
-    category_id = ${v.category}, price = ${v.price}, stock = ${v.stock},
+    category_id = ${v.category}, price = ${v.price},
     description = ${v.description}, video_url = ${v.videoUrl}, published = ${v.published},
     is_featured = ${v.isFeatured}, featured_order = ${v.featuredOrder}, updated_at = now()
     where id = ${id} returning id`

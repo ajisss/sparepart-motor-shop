@@ -11,13 +11,15 @@ export function StoreProvider({ children }) {
     saveData(data)
   }, [data])
 
-  // Products
+  // Products — the storefront now reads products/categories from the API (see
+  // src/store/hooks.js); these remain only for the not-yet-migrated admin UI,
+  // defensively guarded since the local seed no longer carries products/categories.
   const addProduct = (product) =>
-    setData((d) => ({ ...d, products: [...d.products, product] }))
+    setData((d) => ({ ...d, products: [...(d.products || []), product] }))
   const updateProduct = (id, patch) =>
-    setData((d) => ({ ...d, products: d.products.map((p) => (p.id === id ? { ...p, ...patch } : p)) }))
+    setData((d) => ({ ...d, products: (d.products || []).map((p) => (p.id === id ? { ...p, ...patch } : p)) }))
   const deleteProduct = (id) =>
-    setData((d) => ({ ...d, products: d.products.filter((p) => p.id !== id) }))
+    setData((d) => ({ ...d, products: (d.products || []).filter((p) => p.id !== id) }))
 
   // Users
   const addUser = (user) => {
@@ -68,8 +70,8 @@ export function StoreProvider({ children }) {
 
   const value = {
     data,
-    products: data.products,
-    categories: data.categories,
+    products: data.products || [],
+    categories: data.categories || [],
     users: data.users,
     orders: data.orders,
     promos: data.promos,

@@ -56,7 +56,7 @@ export default function CheckoutPage() {
   const navigate = useNavigate()
   const { items, clearCart, subtotal } = useCart()
   const { currentUser, isLoggedIn } = useAuth()
-  const products = useProducts()
+  const { products } = useProducts()
   const promos = usePromos()
   const { createOrder } = useStore()
 

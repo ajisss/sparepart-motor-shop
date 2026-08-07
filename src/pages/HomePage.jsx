@@ -65,7 +65,7 @@ const TRUST = [
 
 export default function HomePage() {
   const homepage = useHomepage()
-  const products = useProducts()
+  const { products, loading } = useProducts()
 
   const publishedProducts = products.filter((p) => p.published)
   const featured = homepage.featuredProductIds
@@ -123,11 +123,15 @@ export default function HomePage() {
               Kurasi sparepart original terlaris — siap kirim, cocok untuk motor harian maupun modifikasi.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4 lg:gap-x-6">
-            {featured.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
+          {loading ? (
+            <p className="py-12 text-center text-neutral-600">Memuat produk…</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4 lg:gap-x-6">
+              {featured.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          )}
           <div className="mt-14 flex justify-center">
             <Link to="/search">
               <Button variant="primary" size="lg">Lihat Semua Produk</Button>

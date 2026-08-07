@@ -1,19 +1,15 @@
-import { PRODUCTS } from '../data/products.js'
-import { CATEGORIES } from '../data/categories.js'
 import { USERS } from '../data/users.js'
 import { PROMOS } from '../data/promos.js'
 import { SHIPPING } from '../data/shipping.js'
 import { HOMEPAGE } from '../data/homepage.js'
 import { ORDERS } from '../data/orders.js'
 
-export const VERSION = 5
+export const VERSION = 6
 const STORAGE_KEY = 'dmb:data'
 
 export function buildSeed() {
   return structuredClone({
     version: VERSION,
-    products: PRODUCTS,
-    categories: CATEGORIES,
     users: USERS,
     orders: ORDERS,
     promos: PROMOS,

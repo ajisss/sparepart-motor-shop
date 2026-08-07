@@ -27,7 +27,7 @@ async function run() {
   for (const raw of PRODUCTS) {
     const v = validateProductInput({
       id: raw.id, sku: raw.sku, name: raw.name, brand: raw.brand, category: raw.category,
-      price: raw.price, stock: raw.stock, description: raw.description, videoUrl: raw.videoUrl,
+      price: raw.price, description: raw.description, videoUrl: raw.videoUrl,
       published: raw.published, isFeatured: raw.isFeatured, images: raw.images,
       compatibleWith: raw.compatibleWith,
     })
@@ -35,12 +35,12 @@ async function run() {
     const p = v.value
     const id = p.id
     await sql`insert into products
-      (id, sku, name, slug, brand, category_id, price, stock, description, video_url, published, is_featured, featured_order)
-      values (${id}, ${p.sku}, ${p.name}, ${p.slug}, ${p.brand}, ${p.category}, ${p.price}, ${p.stock},
+      (id, sku, name, slug, brand, category_id, price, description, video_url, published, is_featured, featured_order)
+      values (${id}, ${p.sku}, ${p.name}, ${p.slug}, ${p.brand}, ${p.category}, ${p.price},
               ${p.description}, ${p.videoUrl}, ${p.published}, ${p.isFeatured}, ${p.featuredOrder})
       on conflict (id) do update set
         sku = excluded.sku, name = excluded.name, slug = excluded.slug, brand = excluded.brand,
-        category_id = excluded.category_id, price = excluded.price, stock = excluded.stock,
+        category_id = excluded.category_id, price = excluded.price,
         description = excluded.description, video_url = excluded.video_url, published = excluded.published,
         is_featured = excluded.is_featured, featured_order = excluded.featured_order`
     await sql`delete from product_images where product_id = ${id}`

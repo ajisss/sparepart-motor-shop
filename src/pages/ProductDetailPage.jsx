@@ -22,11 +22,31 @@ export default function ProductDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { addItem } = useCart()
-  const categories = useCategories()
+  const { categories } = useCategories()
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
 
-  const product = useProduct(id)
+  const { product, loading, error } = useProduct(id)
+
+  if (loading) {
+    return (
+      <div>
+        <Nav />
+        <p className="py-24 text-center text-neutral-600">Memuat…</p>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div>
+        <Nav />
+        <p className="py-24 text-center text-neutral-600">Gagal memuat produk.</p>
+        <Footer />
+      </div>
+    )
+  }
 
   if (!product) {
     return (
@@ -44,7 +64,6 @@ export default function ProductDetailPage() {
   }
 
   const category = categories.find((c) => c.id === product.category)
-  const hasStock = product.stock > 0
 
   // Catalog-only phase: no cart/checkout, funnel enquiries to WhatsApp.
   const waHref = `https://wa.me/${STORE_WHATSAPP}?text=${encodeURIComponent(
@@ -109,18 +128,7 @@ export default function ProductDetailPage() {
           </div>
           <div className="border-t border-neutral-100" />
 
-          <div className="flex items-center justify-between">
-            <PriceTag amount={product.price} />
-            <span
-              className={`rounded-pill px-4 py-1 text-xs font-medium uppercase tracking-[0.18px] ${
-                hasStock
-                  ? 'bg-secondary-100 text-secondary-800'
-                  : 'bg-neutral-100 text-neutral-600'
-              }`}
-            >
-              {hasStock ? `Stok: ${product.stock}` : 'Stok habis'}
-            </span>
-          </div>
+          <PriceTag amount={product.price} />
           <div className="border-t border-neutral-100" />
 
           <div className="flex flex-col gap-4">
@@ -151,13 +159,12 @@ export default function ProductDetailPage() {
             </a>
           ) : (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <QuantitySelector value={qty} min={1} max={hasStock ? product.stock : 1} onChange={setQty} />
+              <QuantitySelector value={qty} min={1} max={99} onChange={setQty} />
               <div className="flex flex-1 gap-3">
                 <Button
                   variant="secondary"
                   className="flex-1 whitespace-nowrap"
                   onClick={handleAddToCart}
-                  disabled={!hasStock}
                 >
                   {added ? 'Ditambahkan ✓' : 'Tambah ke Keranjang'}
                 </Button>
@@ -165,7 +172,6 @@ export default function ProductDetailPage() {
                   variant="primary"
                   className="flex-1 whitespace-nowrap"
                   onClick={handleBuyNow}
-                  disabled={!hasStock}
                 >
                   Checkout Sekarang
                 </Button>

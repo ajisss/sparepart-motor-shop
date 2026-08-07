@@ -15,8 +15,8 @@ export default function Nav({ overlay = false }) {
   const { items, itemCount, subtotal } = useCart()
   const { isLoggedIn, logout } = useAuth()
   const { myConversation, myUnread, sendAsCustomer, markReadBy } = useChat()
-  const categories = useCategories()
-  const products = useProducts()
+  const { categories } = useCategories()
+  const { products } = useProducts()
   const navigate = useNavigate()
   const location = useLocation()
 

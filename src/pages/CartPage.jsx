@@ -13,7 +13,7 @@ import { formatCurrency } from '../utils/formatCurrency'
 
 export default function CartPage() {
   const { items, updateQty, removeItem, clearCart, subtotal } = useCart()
-  const products = useProducts()
+  const { products } = useProducts()
   const navigate = useNavigate()
   const [pendingDeleteId, setPendingDeleteId] = useState(null)
   const [confirmClearAll, setConfirmClearAll] = useState(false)
