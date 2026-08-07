@@ -1,12 +1,14 @@
 import { useState, useRef } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import {
-  UploadSimple, X, CaretDown, ShoppingCart, Package,
+  X, CaretDown, ShoppingCart, Package, Plus,
 } from '@phosphor-icons/react'
 import { useStore } from '../../store/StoreProvider'
 import { formatCurrency } from '../../utils/formatCurrency'
 
 const BRANDS = ['NHK', 'GS Astra', 'RCB', 'Shell', 'IRC', 'NGK', 'Osram', 'TDR', 'Yamalube', 'Rossi', 'Honda Genuine', 'Daytona', 'Acerbis', 'AHM', 'Corsa', 'Yamaha Genuine', 'FDR']
+
+const MAX_IMAGES = 5
 
 function FieldLabel({ children }) {
   return <p className="mb-1.5 text-[14px] font-medium text-[var(--adm-ink)]">{children}</p>
@@ -41,54 +43,15 @@ function Select({ value, onChange, options, placeholder }) {
   )
 }
 
-// Image slot placeholder
-function ImageSlot({ src, onRemove, main, onClick }) {
-  if (src) {
-    return (
-      <div className="relative aspect-square overflow-hidden rounded-xl border border-[var(--adm-border)] bg-[var(--adm-bg)] cursor-pointer" onClick={onClick}>
-        <img src={src} alt="" className="size-full object-cover" />
-        {onRemove && (
-          <button
-            type="button"
-            className="absolute right-1 top-1 flex size-5 items-center justify-center rounded-full bg-black/60 text-white"
-            onClick={(e) => { e.stopPropagation(); onRemove() }}
-          >
-            <X size={10} />
-          </button>
-        )}
-        {main && (
-          <span className="absolute bottom-1 left-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] text-white">Utama</span>
-        )}
-      </div>
-    )
-  }
-  return (
-    <div
-      className="flex aspect-square flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-[var(--adm-border)] bg-[var(--adm-bg)] cursor-pointer hover:border-[var(--adm-muted)] transition-colors"
-      onClick={onClick}
-    >
-      {main ? (
-        <>
-          <UploadSimple size={24} className="text-[var(--adm-muted)]" />
-          <span className="text-[11px] text-[var(--adm-muted)]">Upload foto</span>
-        </>
-      ) : (
-        <Package size={20} className="text-[var(--adm-border-strong)]" />
-      )}
-    </div>
-  )
-}
-
 export default function ProductFormPage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { products, categories, addProduct, updateProduct } = useStore()
   const fileInputRef = useRef(null)
-  const [activeImgSlot, setActiveImgSlot] = useState(null)
 
   const existing = id && id !== 'new' ? products.find((p) => p.id === id) : null
 
-  const [images, setImages] = useState(existing?.images || Array(9).fill(null))
+  const [images, setImages] = useState(existing?.images || [])
   const [name, setName] = useState(existing?.name || '')
   const [category, setCategory] = useState(existing?.category || '')
   const [brand, setBrand] = useState(existing?.brand || '')
@@ -100,28 +63,22 @@ export default function ProductFormPage() {
 
   const isNew = !existing
 
-  // Computed preview image
-  const previewImg = images.find(Boolean) || null
+  // First image is the cover ("Utama").
+  const previewImg = images[0] || null
 
-  const handleImgClick = (idx) => {
-    setActiveImgSlot(idx)
-    fileInputRef.current?.click()
-  }
+  const openPicker = () => fileInputRef.current?.click()
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0]
-    if (!file || activeImgSlot === null) return
+    if (!file) return
+    // Preview via a temporary object URL. Real persistence needs Vercel Blob
+    // (upload the file, then store the returned URL) — deferred to a later phase.
     const url = URL.createObjectURL(file)
-    setImages((prev) => {
-      const next = [...prev]
-      next[activeImgSlot] = url
-      return next
-    })
+    setImages((prev) => (prev.length >= MAX_IMAGES ? prev : [...prev, url]))
     e.target.value = ''
   }
 
-  const removeImg = (idx) =>
-    setImages((prev) => { const next = [...prev]; next[idx] = null; return next })
+  const removeImg = (idx) => setImages((prev) => prev.filter((_, i) => i !== idx))
 
   const handleSave = async (asDraft = false) => {
     const payload = {
@@ -132,7 +89,7 @@ export default function ProductFormPage() {
       description,
       price: Number(price),
       sku,
-      images: images.filter(Boolean),
+      images,
       videoUrl: videoUrl.trim(),
       published: !asDraft,
       isFeatured: existing?.isFeatured || false,
@@ -187,29 +144,43 @@ export default function ProductFormPage() {
         <div className="flex flex-1 flex-col gap-4 min-w-0">
           {/* Images */}
           <div className="adm-card p-5">
-            <FieldLabel>Gambar</FieldLabel>
+            <div className="mb-1 flex items-center justify-between">
+              <FieldLabel>Gambar</FieldLabel>
+              <span className="text-[12px] text-[var(--adm-muted)]">{images.length}/{MAX_IMAGES}</span>
+            </div>
             <p className="mb-3 text-[12px] text-[var(--adm-muted)]">
-              Dimensi: 600 × 600 px. Maks. 10 MB (hingga 9 file). Format: JPG, JPEG, PNG
+              Maks. {MAX_IMAGES} foto. Foto pertama jadi gambar utama. Format: JPG, JPEG, PNG.
             </p>
-            <div className="grid grid-cols-4 gap-2">
-              {/* Main slot (bigger) */}
-              <div className="col-span-1 row-span-2">
-                <ImageSlot
-                  src={images[0]}
-                  onRemove={images[0] ? () => removeImg(0) : null}
-                  main
-                  onClick={() => handleImgClick(0)}
-                />
-              </div>
-              {/* Thumbnail slots */}
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <ImageSlot
+            <div className="flex flex-wrap gap-3">
+              {images.map((src, i) => (
+                <div
                   key={i}
-                  src={images[i]}
-                  onRemove={images[i] ? () => removeImg(i) : null}
-                  onClick={() => handleImgClick(i)}
-                />
+                  className="relative aspect-square w-[104px] overflow-hidden rounded-xl border border-[var(--adm-border)] bg-[var(--adm-bg)]"
+                >
+                  <img src={src} alt="" className="size-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => removeImg(i)}
+                    className="absolute right-1 top-1 flex size-5 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
+                    aria-label="Hapus gambar"
+                  >
+                    <X size={11} />
+                  </button>
+                  {i === 0 && (
+                    <span className="absolute bottom-1 left-1 rounded-full bg-black/60 px-1.5 py-0.5 text-[9px] text-white">Utama</span>
+                  )}
+                </div>
               ))}
+              {images.length < MAX_IMAGES && (
+                <button
+                  type="button"
+                  onClick={openPicker}
+                  className="flex aspect-square w-[104px] flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-[var(--adm-border)] bg-[var(--adm-bg)] text-[var(--adm-muted)] transition-colors hover:border-[var(--adm-muted)] hover:text-[var(--adm-ink)]"
+                >
+                  <Plus size={20} />
+                  <span className="text-[11px]">Tambah Gambar</span>
+                </button>
+              )}
             </div>
             <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
           </div>
@@ -303,9 +274,9 @@ export default function ProductFormPage() {
               <p className="mt-1 text-[11px] leading-relaxed text-[var(--adm-muted)] line-clamp-3">{description}</p>
             )}
 
-            {images.filter(Boolean).length > 1 && (
+            {images.length > 1 && (
               <div className="mt-2 flex gap-1">
-                {images.filter(Boolean).slice(1, 4).map((src, i) => (
+                {images.slice(1, 4).map((src, i) => (
                   <img key={i} src={src} alt="" className="size-9 rounded-lg object-cover border border-[var(--adm-border)]" />
                 ))}
               </div>
