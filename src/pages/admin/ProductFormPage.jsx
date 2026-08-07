@@ -1,56 +1,12 @@
 import { useState, useRef } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import {
-  UploadSimple, X, CaretDown, Sparkle, ShoppingCart,
-  Package, Check, Plus, Minus,
+  UploadSimple, X, CaretDown, ShoppingCart, Package,
 } from '@phosphor-icons/react'
 import { useStore } from '../../store/StoreProvider'
 import { formatCurrency } from '../../utils/formatCurrency'
 
 const BRANDS = ['NHK', 'GS Astra', 'RCB', 'Shell', 'IRC', 'NGK', 'Osram', 'TDR', 'Yamalube', 'Rossi', 'Honda Genuine', 'Daytona', 'Acerbis', 'AHM', 'Corsa', 'Yamaha Genuine', 'FDR']
-
-const COMPATIBLE = [
-  'Honda Vario 125', 'Honda Vario 150', 'Honda Beat', 'Honda Scoopy',
-  'Yamaha NMAX', 'Yamaha Aerox', 'Yamaha MX King', 'Yamaha Matic',
-  'Suzuki Address', 'Universal', 'Universal 4-tak', 'Universal Matic',
-]
-
-const RECOMMENDATION = [
-  'Tambah 25–100 karakter untuk nama produk',
-  'Tambah minimal 100 karakter atau 1 gambar untuk deskripsi',
-  'Tambah minimal 3 gambar',
-  'Tambah video produk',
-]
-
-function Toggle({ enabled, onChange }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={enabled}
-      onClick={() => onChange(!enabled)}
-      className="relative flex shrink-0 items-center rounded-full transition-colors"
-      style={{ width: 44, height: 24, background: enabled ? 'var(--adm-mint)' : 'var(--adm-border)' }}
-    >
-      <span
-        className="absolute rounded-full bg-white shadow transition-all"
-        style={{ width: 18, height: 18, left: enabled ? 22 : 4 }}
-      />
-    </button>
-  )
-}
-
-function Checkbox({ checked, onChange }) {
-  return (
-    <span
-      className="flex size-4 shrink-0 cursor-pointer items-center justify-center rounded border transition-colors"
-      style={{ background: checked ? 'var(--adm-forest-500)' : 'white', borderColor: checked ? 'var(--adm-forest-500)' : 'var(--adm-border)' }}
-      onClick={() => onChange(!checked)}
-    >
-      {checked && <Check size={10} weight="bold" color="white" />}
-    </span>
-  )
-}
 
 function FieldLabel({ children }) {
   return <p className="mb-1.5 text-[14px] font-medium text-[var(--adm-ink)]">{children}</p>
@@ -138,29 +94,13 @@ export default function ProductFormPage() {
   const [brand, setBrand] = useState(existing?.brand || '')
   const [compat, setCompat] = useState(existing?.compatibleWith?.join(', ') || '')
   const [description, setDescription] = useState(existing?.description || '')
-  const [aiKeyword, setAiKeyword] = useState('')
-  const [aiGenerated, setAiGenerated] = useState(false)
-  const [showSuggestion, setShowSuggestion] = useState(true)
   const [price, setPrice] = useState(existing?.price || '')
   const [sku, setSku] = useState(existing?.sku || '')
-  const [preorder, setPreorder] = useState(false)
-  const [addVariations, setAddVariations] = useState(false)
-  const [purchaseLimits, setPurchaseLimits] = useState(false)
-  const [minPurchase, setMinPurchase] = useState(1)
-  const [maxPurchase, setMaxPurchase] = useState(2)
 
   const isNew = !existing
 
   // Computed preview image
   const previewImg = images.find(Boolean) || null
-
-  // Recommendation checklist
-  const recs = [
-    { done: name.length >= 25 && name.length <= 100, label: 'Tambah 25–100 karakter untuk nama produk' },
-    { done: description.length >= 100 || images.filter(Boolean).length >= 1, label: 'Tambah minimal 100 karakter atau 1 gambar untuk deskripsi' },
-    { done: images.filter(Boolean).length >= 3, label: 'Tambah minimal 3 gambar' },
-    { done: false, label: 'Tambah video produk' },
-  ]
 
   const handleImgClick = (idx) => {
     setActiveImgSlot(idx)
@@ -181,15 +121,6 @@ export default function ProductFormPage() {
 
   const removeImg = (idx) =>
     setImages((prev) => { const next = [...prev]; next[idx] = null; return next })
-
-  const handleGenerate = () => {
-    if (!aiKeyword.trim()) return
-    setDescription(
-      `${aiKeyword.trim()} — produk sparepart motor berkualitas tinggi yang dirancang untuk memberikan performa optimal. Dibuat dari bahan pilihan yang tahan lama dan telah melalui uji kualitas ketat. Cocok untuk berbagai jenis motor dan mudah dipasang sendiri.`
-    )
-    setAiGenerated(true)
-    setShowSuggestion(false)
-  }
 
   const handleSave = async (asDraft = false) => {
     const payload = {
@@ -305,63 +236,13 @@ export default function ProductFormPage() {
 
           {/* Description */}
           <div className="adm-card flex flex-col gap-3 p-5">
-            <div className="flex items-center justify-between">
-              <FieldLabel>Deskripsi</FieldLabel>
-              {aiGenerated && (
-                <span className="flex items-center gap-1 text-[11px] font-medium" style={{ color: 'var(--adm-mint)' }}>
-                  <Sparkle size={12} weight="fill" /> AI Generated
-                </span>
-              )}
-            </div>
-
-            {showSuggestion && (
-              <div className="rounded-xl border border-[var(--adm-border)] p-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-[13px] font-medium text-[var(--adm-ink)]">
-                    <Sparkle size={14} weight="fill" style={{ color: 'var(--adm-mint)' }} />
-                    Saran AI
-                  </span>
-                  <button type="button" onClick={() => setShowSuggestion(false)}>
-                    <X size={14} className="text-[var(--adm-muted)]" />
-                  </button>
-                </div>
-                <div className="flex gap-2">
-                  <input
-                    className="flex-1 rounded-xl border border-[var(--adm-border)] px-3 py-2 text-[13px] outline-none focus:border-[var(--adm-forest-500)] placeholder:text-[var(--adm-muted)]"
-                    placeholder="Kata kunci manfaat, fitur, atau deskripsi"
-                    value={aiKeyword}
-                    onChange={(e) => setAiKeyword(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleGenerate}
-                    className="rounded-xl px-4 py-2 text-[13px] font-semibold text-black"
-                    style={{ background: 'var(--adm-mint)' }}
-                  >
-                    Generate
-                  </button>
-                </div>
-              </div>
-            )}
-
+            <FieldLabel>Deskripsi</FieldLabel>
             <textarea
               className="h-32 w-full rounded-xl border border-[var(--adm-border)] px-4 py-3 text-[14px] text-[var(--adm-ink)] outline-none placeholder:text-[var(--adm-muted)] focus:border-[var(--adm-forest-500)] resize-none"
               placeholder="Masukkan deskripsi produk di sini"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-
-            {!showSuggestion && (
-              <button
-                type="button"
-                onClick={() => setShowSuggestion(true)}
-                className="flex w-fit items-center gap-1.5 text-[12px]"
-                style={{ color: 'var(--adm-info)' }}
-              >
-                <Sparkle size={12} weight="fill" /> Gunakan saran AI
-              </button>
-            )}
           </div>
 
           {/* Video */}
@@ -376,26 +257,9 @@ export default function ProductFormPage() {
             </div>
           </div>
 
-          {/* Variations */}
-          <div
-            className="adm-card flex items-center justify-between gap-4 p-5"
-            style={{ background: addVariations ? 'rgba(254,201,1,0.06)' : undefined }}
-          >
-            <div>
-              <p className="text-[14px] font-medium text-[var(--adm-ink)]">Tambah Variasi</p>
-              <p className="text-[12px] text-[var(--adm-muted)]">Tambahkan hingga 3 variasi produk (ukuran, warna, material, dll).</p>
-            </div>
-            <Toggle enabled={addVariations} onChange={setAddVariations} />
-          </div>
-
-          {/* Price & Stock */}
+          {/* Price */}
           <div className="adm-card flex flex-col gap-4 p-5">
             <p className="text-[15px] font-medium text-[var(--adm-ink)]">Harga</p>
-
-            <label className="flex cursor-pointer items-center gap-2">
-              <Checkbox checked={preorder} onChange={setPreorder} />
-              <span className="text-[13px] text-[var(--adm-ink)]">Pre-order</span>
-            </label>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -415,74 +279,6 @@ export default function ProductFormPage() {
                 <FieldLabel>SKU Produk</FieldLabel>
                 <Input value={sku} onChange={(e) => setSku(e.target.value)} placeholder="Contoh: NHK-001" />
               </div>
-            </div>
-
-            {/* Purchase Limits */}
-            <div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[14px] font-medium text-[var(--adm-ink)]">Batas Pembelian Pelanggan</p>
-                  <p className="text-[12px] text-[var(--adm-muted)]">Atur jumlah min & maks pembelian per pesanan.</p>
-                </div>
-                <Toggle enabled={purchaseLimits} onChange={setPurchaseLimits} />
-              </div>
-
-              {purchaseLimits && (
-                <div className="mt-3 grid grid-cols-2 gap-3">
-                  <div>
-                    <FieldLabel>Minimum</FieldLabel>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setMinPurchase((p) => Math.max(1, p - 1))}
-                        className="flex size-8 items-center justify-center rounded-lg border border-[var(--adm-border)]"
-                      >
-                        <Minus size={14} />
-                      </button>
-                      <input
-                        className="w-16 rounded-xl border border-[var(--adm-border)] py-1.5 text-center text-[14px]"
-                        type="number"
-                        min={1}
-                        value={minPurchase}
-                        onChange={(e) => setMinPurchase(Number(e.target.value))}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setMinPurchase((p) => p + 1)}
-                        className="flex size-8 items-center justify-center rounded-lg border border-[var(--adm-border)]"
-                      >
-                        <Plus size={14} />
-                      </button>
-                    </div>
-                  </div>
-                  <div>
-                    <FieldLabel>Maksimum</FieldLabel>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setMaxPurchase((p) => Math.max(1, p - 1))}
-                        className="flex size-8 items-center justify-center rounded-lg border border-[var(--adm-border)]"
-                      >
-                        <Minus size={14} />
-                      </button>
-                      <input
-                        className="w-16 rounded-xl border border-[var(--adm-border)] py-1.5 text-center text-[14px]"
-                        type="number"
-                        min={1}
-                        value={maxPurchase}
-                        onChange={(e) => setMaxPurchase(Number(e.target.value))}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setMaxPurchase((p) => p + 1)}
-                        className="flex size-8 items-center justify-center rounded-lg border border-[var(--adm-border)]"
-                      >
-                        <Plus size={14} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -530,28 +326,6 @@ export default function ProductFormPage() {
                 {formatCurrency(Number(price))}
               </p>
             )}
-          </div>
-
-          {/* Recommendations */}
-          <div className="adm-card p-4">
-            <p className="mb-3 text-[13px] font-medium text-[var(--adm-ink)]">Rekomendasi</p>
-            <div className="flex flex-col gap-2.5">
-              {recs.map((r) => (
-                <div key={r.label} className="flex items-start gap-2">
-                  <span
-                    className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full border"
-                    style={
-                      r.done
-                        ? { background: 'var(--adm-success)', borderColor: 'var(--adm-success)' }
-                        : { borderColor: 'var(--adm-border)' }
-                    }
-                  >
-                    {r.done && <Check size={8} weight="bold" color="white" />}
-                  </span>
-                  <span className="text-[11px] leading-relaxed text-[var(--adm-muted)]">{r.label}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </div>
