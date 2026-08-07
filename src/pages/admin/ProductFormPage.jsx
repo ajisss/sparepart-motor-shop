@@ -96,6 +96,7 @@ export default function ProductFormPage() {
   const [description, setDescription] = useState(existing?.description || '')
   const [price, setPrice] = useState(existing?.price || '')
   const [sku, setSku] = useState(existing?.sku || '')
+  const [videoUrl, setVideoUrl] = useState(existing?.videoUrl || '')
 
   const isNew = !existing
 
@@ -132,7 +133,7 @@ export default function ProductFormPage() {
       price: Number(price),
       sku,
       images: images.filter(Boolean),
-      videoUrl: '',
+      videoUrl: videoUrl.trim(),
       published: !asDraft,
       isFeatured: existing?.isFeatured || false,
       featuredOrder: existing?.featuredOrder ?? null,
@@ -245,16 +246,13 @@ export default function ProductFormPage() {
             />
           </div>
 
-          {/* Video */}
+          {/* Video (YouTube URL) */}
           <div className="adm-card p-5">
-            <FieldLabel>Video</FieldLabel>
+            <FieldLabel>Video YouTube</FieldLabel>
             <p className="mb-3 text-[12px] text-[var(--adm-muted)]">
-              Rasio aspek 9:16 atau 16:9. Maks. 100 MB. Format MP4.
+              Tempel link YouTube produk. Ditampilkan sebagai video tertanam di halaman produk.
             </p>
-            <div className="flex h-24 flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-[var(--adm-border)] bg-[var(--adm-bg)]">
-              <UploadSimple size={20} className="text-[var(--adm-muted)]" />
-              <span className="text-[12px] text-[var(--adm-muted)]">Upload video</span>
-            </div>
+            <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://www.youtube.com/watch?v=..." />
           </div>
 
           {/* Price */}
