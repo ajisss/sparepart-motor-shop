@@ -9,8 +9,6 @@ import dmbLogo from '../../assets/logo-dmb.png'
 import NotificationPanel from './NotificationPanel'
 import SearchModal from './SearchModal'
 
-const LOW_STOCK = 5
-
 function LogoutModal({ onConfirm, onCancel }) {
   return createPortal(
     <div
@@ -54,7 +52,7 @@ function LogoutModal({ onConfirm, onCancel }) {
 
 export default function Topbar() {
   const { currentUser, logout } = useAuth()
-  const { orders = [], products = [] } = useStore()
+  const { orders = [] } = useStore()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
@@ -63,8 +61,7 @@ export default function Topbar() {
   const menuRef = useRef(null)
 
   const unreadCount =
-    orders.filter((o) => o.status === 'Menunggu pembayaran' || o.status === 'Sedang diproses').length +
-    products.filter((p) => p.stock <= LOW_STOCK).length
+    orders.filter((o) => o.status === 'Menunggu pembayaran' || o.status === 'Sedang diproses').length
 
   const initials = (currentUser?.name || 'A')
     .split(' ')

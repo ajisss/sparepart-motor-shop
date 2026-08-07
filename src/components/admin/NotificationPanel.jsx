@@ -3,8 +3,6 @@ import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { useStore } from '../../store/StoreProvider'
 
-const LOW_STOCK = 5
-
 function timeAgo(iso) {
   if (!iso) return ''
   const diff = (Date.now() - new Date(iso)) / 1000
@@ -14,7 +12,7 @@ function timeAgo(iso) {
   return `${Math.floor(diff / 86400)} hari lalu`
 }
 
-function buildNotifications(orders, products) {
+function buildNotifications(orders) {
   const orderNotifs = orders
     .filter((o) => o.status === 'Menunggu pembayaran' || o.status === 'Sedang diproses')
     .map((o) => ({
@@ -40,31 +38,7 @@ function buildNotifications(orders, products) {
       read: true,
     }))
 
-  const lowStockNotifs = products
-    .filter((p) => p.stock > 0 && p.stock <= LOW_STOCK)
-    .map((p) => ({
-      id: `low-${p.id}`,
-      tab: 'products',
-      title: 'Peringatan Stok Menipis',
-      body: `"${p.name}" hampir habis — tersisa ${p.stock} pcs.`,
-      at: null,
-      href: '/admin/products',
-      read: false,
-    }))
-
-  const outNotifs = products
-    .filter((p) => p.stock === 0)
-    .map((p) => ({
-      id: `out-${p.id}`,
-      tab: 'products',
-      title: 'Stok Habis',
-      body: `"${p.name}" sudah habis terjual.`,
-      at: null,
-      href: '/admin/products',
-      read: false,
-    }))
-
-  return [...orderNotifs, ...lowStockNotifs, ...outNotifs, ...shippedNotifs]
+  return [...orderNotifs, ...shippedNotifs]
 }
 
 const TABS = ['Semua', 'Pesanan', 'Produk', 'Promosi']
@@ -72,7 +46,7 @@ const TABS = ['Semua', 'Pesanan', 'Produk', 'Promosi']
 export default function NotificationPanel({ onClose }) {
   const ref = useRef(null)
   const navigate = useNavigate()
-  const { orders = [], products = [] } = useStore()
+  const { orders = [] } = useStore()
   const [tab, setTab] = useState('Semua')
   const [readIds, setReadIds] = useState(new Set())
 
@@ -84,7 +58,7 @@ export default function NotificationPanel({ onClose }) {
     return () => document.removeEventListener('mousedown', handler)
   }, [onClose])
 
-  const all = buildNotifications(orders, products)
+  const all = buildNotifications(orders)
   const tabMap = { 'Semua': null, 'Pesanan': 'orders', 'Produk': 'products', 'Promosi': 'marketing' }
   const visible = tab === 'Semua' ? all : all.filter((n) => n.tab === tabMap[tab])
   const countFor = (t) => all.filter((n) => n.tab === tabMap[t] && !n.read && !readIds.has(n.id)).length

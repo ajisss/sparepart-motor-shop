@@ -4,7 +4,7 @@ import { AdminButton } from './ui/FormControls'
 
 // Commerly "Import Product" modal: dashed dropzone + supported-formats note +
 // full-width Upload CTA. Functionally real for this POC: parses a small CSV
-// (name,sku,brand,category,price,stock) and adds one product per row.
+// (name,sku,brand,category,price) and adds one product per row.
 function parseCsv(text, categories) {
   const rows = text
     .split(/\r?\n/)
@@ -17,8 +17,8 @@ function parseCsv(text, categories) {
   let skipped = 0
 
   for (const row of rows.slice(1)) {
-    const [name, sku, brand, category, price, stock] = row.split(',').map((s) => s?.trim())
-    if (!name || !sku || !catIds.has(category) || isNaN(Number(price)) || isNaN(Number(stock))) {
+    const [name, sku, brand, category, price] = row.split(',').map((s) => s?.trim())
+    if (!name || !sku || !catIds.has(category) || isNaN(Number(price))) {
       skipped++
       continue
     }
@@ -28,7 +28,6 @@ function parseCsv(text, categories) {
       brand: brand || '',
       category,
       price: Number(price),
-      stock: Number(stock),
       images: [`/products/${category}.svg`, `/products/${category}.svg`],
       description: '',
       compatibleWith: [],
@@ -113,7 +112,7 @@ export default function ProductImportModal({ categories, nextId, onImport, onClo
 
           <div className="flex items-center gap-1.5 text-[12px] text-[var(--adm-muted)]">
             <Info size={14} />
-            <span>Format didukung: CSV (nama,sku,brand,kategori,harga,stok)</span>
+            <span>Format didukung: CSV (nama,sku,brand,kategori,harga)</span>
           </div>
 
           {result && (
