@@ -85,7 +85,7 @@ export default function CartPage() {
                     <div className="flex items-center justify-between">
                       <QuantitySelector
                         value={qty}
-                        max={product.stock}
+                        max={99}
                         onChange={(q) => updateQty(productId, q)}
                       />
                       <PriceTag amount={product.price * qty} />
