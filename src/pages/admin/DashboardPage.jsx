@@ -3,13 +3,12 @@ import { useAuth } from '../../context/AuthContext'
 import { useDashboardMetrics } from '../../hooks/useDashboardMetrics'
 import { formatCurrency } from '../../utils/formatCurrency'
 import StatCard from '../../components/admin/widgets/StatCard'
-import StockWidget from '../../components/admin/widgets/StockWidget'
 import RevenueChart from '../../components/admin/widgets/RevenueChart'
 import SalesGauge from '../../components/admin/widgets/SalesGauge'
 import RecentOrders from '../../components/admin/widgets/RecentOrders'
 import Sparkline from '../../components/admin/widgets/Sparkline'
 import MiniBars from '../../components/admin/widgets/MiniBars'
-import { BoxIcon, CartIcon, OrdersIcon, TruckIcon } from '../../components/admin/icons'
+import { BoxIcon, CartIcon, OrdersIcon, TruckIcon, SparkleIcon } from '../../components/admin/icons'
 import { Funnel, SquaresFour } from '@phosphor-icons/react'
 
 function compactRp(n) {
@@ -43,8 +42,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Row 1 — 4 stat cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Row 1 — 5 stat cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <StatCard
           icon={CartIcon}
           label="Total Penjualan"
@@ -77,6 +76,11 @@ export default function DashboardPage() {
           lastWeek={Math.round(m.totalProduct * 1.08)}
           delta={-8}
           info
+        />
+        <StatCard
+          icon={SparkleIcon}
+          label="Produk Unggulan"
+          value={m.featuredProducts.toLocaleString('id-ID')}
         />
       </div>
 

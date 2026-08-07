@@ -142,7 +142,6 @@ export default function ProductFormPage() {
   const [aiGenerated, setAiGenerated] = useState(false)
   const [showSuggestion, setShowSuggestion] = useState(true)
   const [price, setPrice] = useState(existing?.price || '')
-  const [stock, setStock] = useState(existing?.stock || '')
   const [sku, setSku] = useState(existing?.sku || '')
   const [preorder, setPreorder] = useState(false)
   const [addVariations, setAddVariations] = useState(false)
@@ -192,7 +191,7 @@ export default function ProductFormPage() {
     setShowSuggestion(false)
   }
 
-  const handleSave = (asDraft = false) => {
+  const handleSave = async (asDraft = false) => {
     const payload = {
       name,
       category,
@@ -200,22 +199,18 @@ export default function ProductFormPage() {
       compatibleWith: compat.split(',').map((s) => s.trim()).filter(Boolean),
       description,
       price: Number(price),
-      stock: Number(stock),
       sku,
       images: images.filter(Boolean),
       videoUrl: '',
       published: !asDraft,
-      isFeatured: false,
-      rating: existing?.rating || 0,
-      reviewCount: existing?.reviewCount || 0,
-      testimonials: existing?.testimonials || [],
-      createdAt: existing?.createdAt || new Date().toISOString().slice(0, 10),
+      isFeatured: existing?.isFeatured || false,
+      featuredOrder: existing?.featuredOrder ?? null,
     }
     if (isNew) {
       const nums = products.map((p) => /^p(\d+)$/.exec(p.id)).filter(Boolean).map((m) => Number(m[1]))
-      addProduct({ ...payload, id: 'p' + ((nums.length ? Math.max(...nums) : 0) + 1) })
+      await addProduct({ ...payload, id: 'p' + ((nums.length ? Math.max(...nums) : 0) + 1) })
     } else {
-      updateProduct(id, payload)
+      await updateProduct(id, payload)
     }
     navigate('/admin/products')
   }
@@ -395,14 +390,14 @@ export default function ProductFormPage() {
 
           {/* Price & Stock */}
           <div className="adm-card flex flex-col gap-4 p-5">
-            <p className="text-[15px] font-medium text-[var(--adm-ink)]">Harga & Stok</p>
+            <p className="text-[15px] font-medium text-[var(--adm-ink)]">Harga</p>
 
             <label className="flex cursor-pointer items-center gap-2">
               <Checkbox checked={preorder} onChange={setPreorder} />
               <span className="text-[13px] text-[var(--adm-ink)]">Pre-order</span>
             </label>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <div>
                 <FieldLabel>Harga Jual</FieldLabel>
                 <div className="relative">
@@ -415,10 +410,6 @@ export default function ProductFormPage() {
                     onChange={(e) => setPrice(e.target.value)}
                   />
                 </div>
-              </div>
-              <div>
-                <FieldLabel>Stok</FieldLabel>
-                <Input value={stock} onChange={(e) => setStock(e.target.value)} placeholder="0" />
               </div>
               <div>
                 <FieldLabel>SKU Produk</FieldLabel>

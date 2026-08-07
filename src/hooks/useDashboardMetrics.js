@@ -12,7 +12,6 @@ const SHIP = ['Siap dikirim', 'Dalam pengiriman']
 const DONE = ['Selesai']
 const REFUND = ['Refund diproses']
 
-const LOW_STOCK_THRESHOLD = 5
 const PERIOD_DAYS = 30
 const PERIOD_TARGET = 6_000_000 // demo 30-day revenue target for the gauge
 
@@ -28,17 +27,9 @@ export function useDashboardMetrics() {
   return useMemo(() => {
     const now = new Date()
 
-    // ---- Products / stock ----------------------------------------------
+    // ---- Products ---------------------------------------------------------
     const totalProduct = products.length
-    const stock = { out: 0, low: 0, in: 0 }
-    for (const p of products) {
-      if (p.stock === 0) stock.out += 1
-      else if (p.stock <= LOW_STOCK_THRESHOLD) stock.low += 1
-      else stock.in += 1
-    }
-    const lowStockProducts = products
-      .filter((p) => p.stock <= LOW_STOCK_THRESHOLD)
-      .sort((a, b) => a.stock - b.stock)
+    const featuredProducts = products.filter((p) => p.isFeatured).length
 
     // ---- Orders ---------------------------------------------------------
     const totalOrders = orders.length
@@ -111,8 +102,7 @@ export function useDashboardMetrics() {
 
     return {
       totalProduct,
-      stock,
-      lowStockProducts,
+      featuredProducts,
       totalOrders,
       totalSales,
       unitsSold,

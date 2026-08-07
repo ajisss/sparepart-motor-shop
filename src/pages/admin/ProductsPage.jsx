@@ -9,7 +9,6 @@ import {
   Eye,
   EyeSlash,
   CaretDown,
-  Funnel,
   DownloadSimple,
   X,
   Copy,
@@ -21,13 +20,10 @@ import PageHeader from '../../components/admin/PageHeader'
 import { AdminButton, AdminCheckbox, AdminInput } from '../../components/admin/ui/FormControls'
 import Dropdown from '../../components/admin/ui/Dropdown'
 import StatCard from '../../components/admin/widgets/StatCard'
-import StockWidget from '../../components/admin/widgets/StockWidget'
 import AIInsightCard from '../../components/admin/widgets/AIInsightCard'
 import Sparkline from '../../components/admin/widgets/Sparkline'
 import ProductImportModal from '../../components/admin/ProductImportModal'
 import { BoxIcon } from '../../components/admin/icons'
-
-const LOW_STOCK_THRESHOLD = 5
 
 const TABS = [
   { key: 'published', label: 'Published' },
@@ -35,23 +31,6 @@ const TABS = [
   { key: 'hidden', label: 'Hidden' },
   { key: 'under_review', label: 'Under Review' },
 ]
-
-function StockBadge({ stock }) {
-  const cfg =
-    stock === 0
-      ? ['Out of stock', 'var(--adm-outstock-text)', 'var(--adm-outstock-bg)', 'var(--adm-outstock-border)']
-      : stock <= LOW_STOCK_THRESHOLD
-        ? ['Low stock', 'var(--adm-lowstock-text)', 'var(--adm-lowstock-bg)', 'var(--adm-lowstock-border)']
-        : ['In stock', 'var(--adm-instock-text)', 'var(--adm-instock-bg)', 'var(--adm-instock-border)']
-  return (
-    <span
-      className="inline-flex items-center whitespace-nowrap rounded-[100px] border px-2.5 py-0.5 text-[14px]"
-      style={{ color: cfg[1], background: cfg[2], borderColor: cfg[3] }}
-    >
-      {cfg[0]}
-    </span>
-  )
-}
 
 function nextProductId(products) {
   const nums = products.map((p) => /^p(\d+)$/.exec(p.id)).filter(Boolean).map((m) => Number(m[1]))
@@ -65,22 +44,13 @@ export default function ProductsPage() {
   const [tab, setTab] = useState('published')
   const [q, setQ] = useState('')
   const [selectedCats, setSelectedCats] = useState(new Set())
-  const [selectedStockFilter, setSelectedStockFilter] = useState(new Set())
   const [selected, setSelected] = useState(new Set())
   const [confirmDel, setConfirmDel] = useState(null)
   const [showImport, setShowImport] = useState(false)
 
   const catName = (id) => categories.find((c) => c.id === id)?.name || id
 
-  const stockBucket = (p) => (p.stock === 0 ? 'out' : p.stock <= LOW_STOCK_THRESHOLD ? 'low' : 'in')
-
   // ---- derived metrics for the widget row --------------------------------
-  const stock = useMemo(() => {
-    const s = { out: 0, low: 0, in: 0 }
-    products.forEach((p) => s[stockBucket(p)]++)
-    return s
-  }, [products])
-
   const sparkline = useMemo(() => {
     // Cumulative product count over the last 14 days, from real createdAt data.
     const days = 14
@@ -100,14 +70,13 @@ export default function ProductsPage() {
     const now = new Date()
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
     const newThisMonth = products.filter((p) => new Date(p.createdAt) >= monthStart).length
+    const publishedCount = products.filter((p) => p.published).length
     const lines = []
-    if (stock.low + stock.out > 0) {
-      lines.push(`${stock.low + stock.out} sparepart perlu direstok (menipis/habis)`)
-    }
+    lines.push(`${publishedCount} produk sedang dipublish`)
     lines.push(`${newThisMonth} produk baru ditambahkan bulan ini`)
     lines.push('Lihat performa penjualan lengkap di Dashboard')
     return lines
-  }, [products, stock])
+  }, [products])
 
   // ---- filtering ----------------------------------------------------------
   const filtered = products.filter((p) => {
@@ -119,8 +88,7 @@ export default function ProductsPage() {
       p.sku.toLowerCase().includes(q.toLowerCase()) ||
       (p.brand || '').toLowerCase().includes(q.toLowerCase())
     const matchCat = selectedCats.size === 0 || selectedCats.has(p.category)
-    const matchStock = selectedStockFilter.size === 0 || selectedStockFilter.has(stockBucket(p))
-    return matchTab && matchQ && matchCat && matchStock
+    return matchTab && matchQ && matchCat
   })
 
   const allChecked = filtered.length > 0 && filtered.every((p) => selected.has(p.id))
@@ -178,9 +146,6 @@ export default function ProductsPage() {
             </div>
           }
         />
-        <div className="w-[366px] max-w-full">
-          <StockWidget stock={stock} />
-        </div>
         <AIInsightCard insights={insights} />
       </div>
 
@@ -244,42 +209,6 @@ export default function ProductsPage() {
                 </div>
               )}
             />
-
-            <Dropdown
-              trigger={(toggle) => (
-                <button
-                  onClick={toggle}
-                  className="flex h-[47px] items-center gap-2 rounded-[100px] border border-[var(--adm-border)] bg-white px-5 text-[18px] text-black"
-                >
-                  <Funnel size={18} /> Filter
-                </button>
-              )}
-              align="right"
-              panel={() => (
-                <div className="adm-card w-56 p-2">
-                  {[
-                    ['in', 'In stock'],
-                    ['low', 'Low stock'],
-                    ['out', 'Out of stock'],
-                  ].map(([key, label]) => (
-                    <label key={key} className="flex items-center gap-2.5 rounded-xl px-3 py-2 hover:bg-[var(--adm-bg)]">
-                      <AdminCheckbox
-                        checked={selectedStockFilter.has(key)}
-                        onChange={() =>
-                          setSelectedStockFilter((s) => {
-                            const next = new Set(s)
-                            if (next.has(key)) next.delete(key)
-                            else next.add(key)
-                            return next
-                          })
-                        }
-                      />
-                      <span className="text-[15px] text-black">{label}</span>
-                    </label>
-                  ))}
-                </div>
-              )}
-            />
           </div>
         </div>
 
@@ -294,7 +223,6 @@ export default function ProductsPage() {
                 <th className="py-4 font-normal">Product Name</th>
                 <th className="py-4 font-normal">Category</th>
                 <th className="py-4 font-normal">Price</th>
-                <th className="py-4 font-normal">Stock</th>
                 <th className="py-4 font-normal">Status</th>
                 <th className="rounded-r-[40px] py-4 pr-6 font-normal">Action</th>
               </tr>
@@ -315,9 +243,17 @@ export default function ProductsPage() {
                   </td>
                   <td className="py-3.5 pr-4 text-[16px] text-black">{catName(p.category)}</td>
                   <td className="py-3.5 pr-4 text-[16px] text-black">{formatCurrency(p.price)}</td>
-                  <td className="py-3.5 pr-4 text-[16px] text-black">{p.stock} pcs</td>
                   <td className="py-3.5 pr-4">
-                    <StockBadge stock={p.stock} />
+                    <span
+                      className="inline-flex items-center whitespace-nowrap rounded-[100px] border px-2.5 py-0.5 text-[14px]"
+                      style={
+                        p.published
+                          ? { color: 'var(--adm-instock-text)', background: 'var(--adm-instock-bg)', borderColor: 'var(--adm-instock-border)' }
+                          : { color: 'var(--adm-lowstock-text)', background: 'var(--adm-lowstock-bg)', borderColor: 'var(--adm-lowstock-border)' }
+                      }
+                    >
+                      {p.published ? 'Published' : 'Draft'}
+                    </span>
                   </td>
                   <td className="py-3.5 pr-6">
                     <div className="flex items-center gap-1">
@@ -386,7 +322,7 @@ export default function ProductsPage() {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-10 text-center text-[var(--adm-muted)]">
+                  <td colSpan={6} className="py-10 text-center text-[var(--adm-muted)]">
                     {['hidden', 'under_review'].includes(tab)
                       ? 'Status ini belum tersedia pada versi POC ini.'
                       : 'Tidak ada produk yang cocok.'}

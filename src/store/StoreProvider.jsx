@@ -1,6 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { loadData, saveData, clearData } from './seed'
 import { generateOrderNumber } from '../utils/orderNumber'
+import { adminListProducts, adminCreateProduct, adminUpdateProduct, adminDeleteProduct } from '../lib/adminApi'
+import { fetchCategories } from '../lib/api'
+
+const IS_ADMIN = import.meta.env.VITE_APP_TARGET === 'admin'
 
 const StoreContext = createContext(null)
 
@@ -11,15 +15,44 @@ export function StoreProvider({ children }) {
     saveData(data)
   }, [data])
 
-  // Products — the storefront now reads products/categories from the API (see
-  // src/store/hooks.js); these remain only for the not-yet-migrated admin UI,
-  // defensively guarded since the local seed no longer carries products/categories.
-  const addProduct = (product) =>
+  // Admin build: load real products/categories from the API on mount so
+  // admin edits persist to the Neon database (see src/lib/adminApi.js).
+  useEffect(() => {
+    if (!IS_ADMIN) return
+    Promise.all([adminListProducts(), fetchCategories()])
+      .then(([products, categories]) => setData((d) => ({ ...d, products, categories })))
+      .catch((e) => console.error('admin data load failed', e))
+  }, [])
+
+  // Products — the storefront reads products/categories from the API (see
+  // src/store/hooks.js). In the admin build these mutators are API-backed;
+  // otherwise they fall back to the local seed store, defensively guarded
+  // since the local seed no longer carries products/categories.
+  const addProduct = async (product) => {
+    if (IS_ADMIN) {
+      const created = await adminCreateProduct(product)
+      setData((d) => ({ ...d, products: [...(d.products || []), created] }))
+      return created
+    }
     setData((d) => ({ ...d, products: [...(d.products || []), product] }))
-  const updateProduct = (id, patch) =>
+  }
+  const updateProduct = async (id, patch) => {
+    if (IS_ADMIN) {
+      const current = (data.products || []).find((p) => p.id === id)
+      const saved = await adminUpdateProduct(id, { ...current, ...patch })
+      setData((d) => ({ ...d, products: (d.products || []).map((p) => (p.id === id ? saved : p)) }))
+      return saved
+    }
     setData((d) => ({ ...d, products: (d.products || []).map((p) => (p.id === id ? { ...p, ...patch } : p)) }))
-  const deleteProduct = (id) =>
+  }
+  const deleteProduct = async (id) => {
+    if (IS_ADMIN) {
+      await adminDeleteProduct(id)
+      setData((d) => ({ ...d, products: (d.products || []).filter((p) => p.id !== id) }))
+      return
+    }
     setData((d) => ({ ...d, products: (d.products || []).filter((p) => p.id !== id) }))
+  }
 
   // Users
   const addUser = (user) => {
