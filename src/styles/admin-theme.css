@@ -4,48 +4,54 @@
  * Scoped under `.admin-theme` so the storefront theme is never affected.
  */
 
+/*
+ * Values below are aligned to the storefront's Tailwind token scale
+ * (tailwind.config.js): same brand black + #FEC901, same neutral greyscale,
+ * same semantic hues, same font (Instrument Sans). The `--adm-*` names are
+ * kept so admin components don't need rewiring.
+ */
 .admin-theme {
-  /* Primary — brand black (replaces forest green) */
+  /* Primary — brand black */
   --adm-forest-500: #000000; /* primary-600 */
-  --adm-forest-400: #262626; /* primary-700 hover */
+  --adm-forest-400: #262626; /* primary-700 */
   --adm-forest-200: #71717A; /* neutral-600 */
-  --adm-mint: #FEC901;       /* secondary-600 brand yellow (replaces mint green) */
+  --adm-mint: #FEC901;       /* secondary-600 */
 
-  /* Neutrals */
-  --adm-bg: #f6f6f6;
-  --adm-card: #ffffff;
-  --adm-border: #e2e2e2;
-  --adm-border-strong: #d3d3d3;
-  --adm-muted: #a0a0a0;
-  --adm-text: #27272A;
-  --adm-ink: #000000;
-  --adm-white-600: #e8e8e8;
+  /* Neutrals — storefront neutral scale */
+  --adm-bg: #F4F4F5;          /* neutral-50 */
+  --adm-card: #FFFFFF;        /* neutral-0 */
+  --adm-border: #E4E4E7;      /* neutral-100 */
+  --adm-border-strong: #D4D4D8; /* neutral-200 */
+  --adm-muted: #A1A1AA;       /* neutral-300 */
+  --adm-text: #27272A;        /* neutral-800 */
+  --adm-ink: #000000;         /* primary */
+  --adm-white-600: #E4E4E7;   /* neutral-100 */
 
-  /* Semantics */
-  --adm-success: #0e8f21;
-  --adm-success-bg: #e7f4e9;
-  --adm-danger: #ff0013;
-  --adm-danger-bg: #ffe6e7;
-  --adm-warning: #ffaa33;
-  --adm-info: #0051ff;
+  /* Semantics — storefront values */
+  --adm-success: #16A34A;
+  --adm-success-bg: #ECFDF3;
+  --adm-danger: #DC2626;
+  --adm-danger-bg: #FEF3F2;
+  --adm-warning: #D97706;
+  --adm-info: #2563EB;
 
-  /* Exact stock-status pill colors */
-  --adm-instock-bg: #e7f4e9;
-  --adm-instock-border: #b4dcba;
-  --adm-instock-text: #0e8f21;
-  --adm-lowstock-bg: #fff4e6;
-  --adm-lowstock-border: #ffdeb0;
-  --adm-lowstock-text: #ff9500;
-  --adm-outstock-bg: #ffe6e7;
-  --adm-outstock-border: #ffb3ba;
-  --adm-outstock-text: #ff0013;
+  /* Status pills — tints of the aligned semantic hues */
+  --adm-instock-bg: #ECFDF3;
+  --adm-instock-border: #ABEFC6;
+  --adm-instock-text: #16A34A;
+  --adm-lowstock-bg: #FFFAEB;
+  --adm-lowstock-border: #FEDF89;
+  --adm-lowstock-text: #D97706;
+  --adm-outstock-bg: #FEF3F2;
+  --adm-outstock-border: #FECDCA;
+  --adm-outstock-text: #DC2626;
 
   /* Radius / shadow */
   --adm-radius: 20px;
   --adm-radius-sm: 12px;
   --adm-shadow: 0 2px 4px rgba(39, 39, 39, 0.1);
 
-  font-family: 'Geist', system-ui, -apple-system, sans-serif;
+  font-family: 'Instrument Sans', system-ui, -apple-system, sans-serif;
   color: var(--adm-ink);
   background: var(--adm-bg);
 }
