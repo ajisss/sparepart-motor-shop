@@ -107,36 +107,17 @@ export default function ProductFormPage() {
   const catOptions = categories.map((c) => ({ value: c.id, label: c.name }))
 
   return (
-    <div className="mx-auto max-w-[1200px] p-6 lg:p-8">
+    <div className="mx-auto max-w-[1200px] px-6 pb-28 pt-6 lg:px-8 lg:pt-8">
       {/* Header */}
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-medium text-[var(--adm-ink)]">
-            {isNew ? 'Tambah Produk' : 'Edit Produk'}
-          </h1>
-          <p className="mt-1 text-[13px] text-[var(--adm-muted)]">
-            <Link to="/admin/products" className="hover:underline">Produk</Link>
-            {' / '}
-            <span>{isNew ? 'Tambah Produk' : name || 'Edit'}</span>
-          </p>
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
-          <button
-            type="button"
-            onClick={() => handleSave(true)}
-            className="flex items-center gap-1.5 rounded-full border border-[var(--adm-border)] bg-white px-4 py-2 text-[13px] font-medium text-[var(--adm-ink)] hover:bg-[var(--adm-bg)]"
-          >
-            Simpan Draft
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSave(false)}
-            className="flex items-center gap-1.5 rounded-full px-5 py-2 text-[13px] font-semibold text-black"
-            style={{ background: 'var(--adm-mint)' }}
-          >
-            Submit Produk
-          </button>
-        </div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-medium text-[var(--adm-ink)]">
+          {isNew ? 'Tambah Produk' : 'Edit Produk'}
+        </h1>
+        <p className="mt-1 text-[13px] text-[var(--adm-muted)]">
+          <Link to="/admin/products" className="hover:underline">Produk</Link>
+          {' / '}
+          <span>{isNew ? 'Tambah Produk' : name || 'Edit'}</span>
+        </p>
       </div>
 
       <div className="flex gap-6">
@@ -296,6 +277,27 @@ export default function ProductFormPage() {
               </p>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Floating action bar */}
+      <div className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2">
+        <div className="flex items-center gap-2 rounded-full border border-[var(--adm-border)] bg-white p-1.5 shadow-[0_10px_40px_rgba(0,0,0,0.16)]">
+          <button
+            type="button"
+            onClick={() => handleSave(true)}
+            className="rounded-full px-5 py-2.5 text-[13px] font-medium text-[var(--adm-ink)] hover:bg-[var(--adm-bg)]"
+          >
+            Simpan Draft
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSave(false)}
+            className="rounded-full px-6 py-2.5 text-[13px] font-semibold text-black"
+            style={{ background: 'var(--adm-mint)' }}
+          >
+            Submit Produk
+          </button>
         </div>
       </div>
     </div>
