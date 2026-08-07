@@ -85,25 +85,31 @@ export async function getProduct(sql, id) {
   return shapeProduct(rows[0], images[id] || [], compat[id] || [])
 }
 
-async function replaceChildren(sql, id, images, compat) {
-  await sql`delete from product_images where product_id = ${id}`
-  await sql`delete from product_compatibility where product_id = ${id}`
-  for (let i = 0; i < images.length; i++) {
-    await sql`insert into product_images (product_id, url, position) values (${id}, ${images[i]}, ${i})`
-  }
-  for (const model of compat) {
-    await sql`insert into product_compatibility (product_id, model) values (${id}, ${model})`
-  }
+// Build the child-row replacement as an array of statements so they run in a
+// single transaction (atomic: never delete-then-fail-to-reinsert).
+function childStatements(sql, id, images, compat) {
+  const stmts = [
+    sql`delete from product_images where product_id = ${id}`,
+    sql`delete from product_compatibility where product_id = ${id}`,
+  ]
+  images.forEach((url, i) => {
+    stmts.push(sql`insert into product_images (product_id, url, position) values (${id}, ${url}, ${i})`)
+  })
+  compat.forEach((model) => {
+    stmts.push(sql`insert into product_compatibility (product_id, model) values (${id}, ${model})`)
+  })
+  return stmts
 }
 
-export async function createProduct(sql, data) {
-  const v = data
+export async function createProduct(sql, v) {
   const id = v.id || v.sku.toLowerCase()
-  await sql`insert into products
-    (id, sku, name, slug, brand, category_id, price, stock, description, video_url, published, is_featured, featured_order)
-    values (${id}, ${v.sku}, ${v.name}, ${v.slug}, ${v.brand}, ${v.category}, ${v.price}, ${v.stock},
-            ${v.description}, ${v.videoUrl}, ${v.published}, ${v.isFeatured}, ${v.featuredOrder})`
-  await replaceChildren(sql, id, v.images, v.compatibleWith)
+  await sql.transaction([
+    sql`insert into products
+      (id, sku, name, slug, brand, category_id, price, stock, description, video_url, published, is_featured, featured_order)
+      values (${id}, ${v.sku}, ${v.name}, ${v.slug}, ${v.brand}, ${v.category}, ${v.price}, ${v.stock},
+              ${v.description}, ${v.videoUrl}, ${v.published}, ${v.isFeatured}, ${v.featuredOrder})`,
+    ...childStatements(sql, id, v.images, v.compatibleWith),
+  ])
   return getProduct(sql, id)
 }
 
@@ -115,7 +121,7 @@ export async function updateProduct(sql, id, v) {
     is_featured = ${v.isFeatured}, featured_order = ${v.featuredOrder}, updated_at = now()
     where id = ${id} returning id`
   if (rows.length === 0) return null
-  await replaceChildren(sql, id, v.images, v.compatibleWith)
+  await sql.transaction(childStatements(sql, id, v.images, v.compatibleWith))
   return getProduct(sql, id)
 }
 
