@@ -10,9 +10,13 @@ import { validateProductInput } from '../api/_lib/products.js'
 const sql = neon(process.env.DATABASE_URL)
 
 async function run() {
-  // migration
+  // migration — the neon() HTTP driver runs one statement per call, so split
+  // the DDL file into individual statements.
   const ddl = readFileSync(new URL('./migrations/001_init.sql', import.meta.url), 'utf8')
-  await sql.query(ddl)
+  const statements = ddl.split(';').map((s) => s.trim()).filter(Boolean)
+  for (const stmt of statements) {
+    await sql.query(stmt)
+  }
 
   for (const c of toCategorySeed(CATEGORIES)) {
     await sql`insert into categories (id, slug, name, position)
@@ -38,7 +42,7 @@ async function run() {
         sku = excluded.sku, name = excluded.name, slug = excluded.slug, brand = excluded.brand,
         category_id = excluded.category_id, price = excluded.price, stock = excluded.stock,
         description = excluded.description, video_url = excluded.video_url, published = excluded.published,
-        is_featured = excluded.is_featured`
+        is_featured = excluded.is_featured, featured_order = excluded.featured_order`
     await sql`delete from product_images where product_id = ${id}`
     await sql`delete from product_compatibility where product_id = ${id}`
     for (let i = 0; i < p.images.length; i++) {
