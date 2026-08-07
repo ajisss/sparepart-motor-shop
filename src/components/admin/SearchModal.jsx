@@ -1,20 +1,15 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MagnifyingGlass, X, Package, ClipboardText } from '@phosphor-icons/react'
+import { MagnifyingGlass, X, Package } from '@phosphor-icons/react'
 import { useStore } from '../../store/StoreProvider'
 
 const SHORTCUTS = [
-  { id: 's1', label: 'Dashboard', desc: 'Lihat ringkasan penjualan dan metrik toko.', href: '/admin' },
-  { id: 's2', label: 'Kelola Pesanan', desc: 'Lihat, lacak, dan kelola semua pesanan di satu tempat.', href: '/admin/orders' },
-  { id: 's3', label: 'Pesanan Selesai', desc: 'Lihat dan kelola pesanan yang sudah selesai.', href: '/admin/orders' },
-  { id: 's4', label: 'Pesanan Dikirim', desc: 'Lihat dan kelola detail pesanan yang sedang dikirim.', href: '/admin/orders' },
-  { id: 's5', label: 'Kelola Produk', desc: 'Tambah, edit, dan hapus produk dari katalog toko.', href: '/admin/products' },
-  { id: 's6', label: 'Tambah Produk Baru', desc: 'Buat listing produk baru di katalog.', href: '/admin/products/new' },
-  { id: 's7', label: 'Chat Pelanggan', desc: 'Balas pesan dan pertanyaan dari pelanggan.', href: '/admin/chats' },
-  { id: 's8', label: 'Pengaturan', desc: 'Kelola pengaturan toko dan preferensi akun.', href: '/admin/settings' },
+  { id: 's1', label: 'Dashboard', desc: 'Lihat ringkasan produk dan katalog toko.', href: '/admin' },
+  { id: 's2', label: 'Kelola Produk', desc: 'Tambah, edit, dan hapus produk dari katalog toko.', href: '/admin/products' },
+  { id: 's3', label: 'Tambah Produk Baru', desc: 'Buat listing produk baru di katalog.', href: '/admin/products/new' },
 ]
 
-const TABS = ['Semua', 'Pintasan', 'Artikel', 'Lainnya']
+const TABS = ['Semua', 'Pintasan', 'Produk']
 
 function highlight(text, query) {
   if (!query) return text
@@ -34,7 +29,7 @@ export default function SearchModal({ onClose }) {
   const [tab, setTab] = useState('Semua')
   const inputRef = useRef(null)
   const navigate = useNavigate()
-  const { products = [], orders = [] } = useStore()
+  const { products = [] } = useStore()
 
   useEffect(() => { inputRef.current?.focus() }, [])
   useEffect(() => {
@@ -50,19 +45,13 @@ export default function SearchModal({ onClose }) {
     [q])
 
   const filteredProducts = useMemo(() =>
-    (tab === 'Semua' || tab === 'Lainnya')
-      ? products.filter((p) => !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)).slice(0, 4)
+    (tab === 'Semua' || tab === 'Produk')
+      ? products.filter((p) => !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)).slice(0, 6)
       : [],
     [q, products, tab])
 
-  const filteredOrders = useMemo(() =>
-    (tab === 'Semua' || tab === 'Lainnya')
-      ? orders.filter((o) => !q || o.id?.toLowerCase().includes(q) || o.customer?.name?.toLowerCase().includes(q) || o.contact?.name?.toLowerCase().includes(q)).slice(0, 4)
-      : [],
-    [q, orders, tab])
-
   const showShortcuts = (tab === 'Semua' || tab === 'Pintasan') && filteredShortcuts.length > 0
-  const hasResults = showShortcuts || filteredProducts.length > 0 || filteredOrders.length > 0
+  const hasResults = showShortcuts || filteredProducts.length > 0
 
   function go(href) { navigate(href); onClose() }
 
@@ -134,7 +123,7 @@ export default function SearchModal({ onClose }) {
               <div className="mx-5 mb-2 border-t border-[var(--adm-border)]" />
               <p className="px-5 pb-2 text-[12px] font-semibold uppercase tracking-wider text-[var(--adm-muted)]">Produk</p>
               {filteredProducts.map((p) => (
-                <button key={p.id} onClick={() => go('/admin/products')} className="flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-[var(--adm-bg)]">
+                <button key={p.id} onClick={() => go(`/admin/products/${p.id}`)} className="flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-[var(--adm-bg)]">
                   <span className="flex size-6 shrink-0 items-center justify-center text-[var(--adm-muted)]"><Package size={16} /></span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-[14px] font-medium text-black">{highlight(p.name, query)}</p>
@@ -145,28 +134,11 @@ export default function SearchModal({ onClose }) {
               ))}
             </section>
           )}
-
-          {filteredOrders.length > 0 && (
-            <section className="pt-4">
-              <div className="mx-5 mb-2 border-t border-[var(--adm-border)]" />
-              <p className="px-5 pb-2 text-[12px] font-semibold uppercase tracking-wider text-[var(--adm-muted)]">Pesanan</p>
-              {filteredOrders.map((o) => (
-                <button key={o.id} onClick={() => go('/admin/orders')} className="flex w-full items-center gap-3 px-5 py-3 text-left transition-colors hover:bg-[var(--adm-bg)]">
-                  <span className="flex size-6 shrink-0 items-center justify-center text-[var(--adm-muted)]"><ClipboardText size={16} /></span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[14px] font-medium text-black">{highlight(`#${o.id}`, query)}</p>
-                    <p className="text-[12px] text-[var(--adm-muted)]">{o.customer?.name || o.contact?.name} · {o.status}</p>
-                  </div>
-                  <span className="shrink-0 text-[13px] text-[var(--adm-muted)]">Rp {(o.total || 0).toLocaleString('id-ID')}</span>
-                </button>
-              ))}
-            </section>
-          )}
         </div>
 
         {/* Footer */}
         <div className="border-t border-[var(--adm-border)]">
-          <button onClick={() => go('/admin')} className="w-full py-4 text-[14px] font-medium text-black hover:bg-[var(--adm-bg)]">
+          <button onClick={() => go('/admin/products')} className="w-full py-4 text-[14px] font-medium text-black hover:bg-[var(--adm-bg)]">
             Lihat semua
           </button>
         </div>

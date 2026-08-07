@@ -1,12 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
-import { MagnifyingGlass, Bell, CaretDown, SignOut, X } from '@phosphor-icons/react'
+import { MagnifyingGlass, CaretDown, SignOut, X } from '@phosphor-icons/react'
 import { useAuth } from '../../context/AuthContext'
-import { useStore } from '../../store/StoreProvider'
 import { ADMIN_LOGIN_SLUG } from '../../config/features'
 import dmbLogo from '../../assets/logo-dmb.png'
-import NotificationPanel from './NotificationPanel'
 import SearchModal from './SearchModal'
 
 function LogoutModal({ onConfirm, onCancel }) {
@@ -52,16 +50,11 @@ function LogoutModal({ onConfirm, onCancel }) {
 
 export default function Topbar() {
   const { currentUser, logout } = useAuth()
-  const { orders = [] } = useStore()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const [notifOpen, setNotifOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [showLogout, setShowLogout] = useState(false)
   const menuRef = useRef(null)
-
-  const unreadCount =
-    orders.filter((o) => o.status === 'Menunggu pembayaran' || o.status === 'Sedang diproses').length
 
   const initials = (currentUser?.name || 'A')
     .split(' ')
@@ -117,27 +110,6 @@ export default function Topbar() {
               <kbd className="rounded border border-[var(--adm-border)] bg-white px-1.5 py-0.5 text-[11px] leading-none text-[var(--adm-muted)]">K</kbd>
             </span>
           </button>
-          {/* Notification bell */}
-          <div>
-            <button
-              onClick={() => setNotifOpen((v) => !v)}
-              className={`relative flex size-11 items-center justify-center rounded-full border transition-colors ${
-                notifOpen
-                  ? 'border-[var(--adm-mint)] bg-[var(--adm-mint)] text-black'
-                  : 'border-[var(--adm-border)] bg-white text-black hover:bg-[var(--adm-bg)]'
-              }`}
-              aria-label="Notifikasi"
-            >
-              <Bell size={20} weight={notifOpen ? 'fill' : 'regular'} />
-              {unreadCount > 0 && !notifOpen && (
-                <span className="absolute right-2 top-2 flex min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold leading-[16px] text-white">
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </span>
-              )}
-            </button>
-            {notifOpen && <NotificationPanel onClose={() => setNotifOpen(false)} />}
-          </div>
-
           {/* User menu */}
           <div className="relative" ref={menuRef}>
             <button
