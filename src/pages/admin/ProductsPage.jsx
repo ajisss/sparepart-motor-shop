@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Plus,
@@ -12,7 +12,6 @@ import {
   DownloadSimple,
   X,
   Copy,
-  ArrowSquareOut,
 } from '@phosphor-icons/react'
 import { useStore } from '../../store/StoreProvider'
 import { formatCurrency } from '../../utils/formatCurrency'
@@ -20,16 +19,14 @@ import PageHeader from '../../components/admin/PageHeader'
 import { AdminButton, AdminCheckbox, AdminInput } from '../../components/admin/ui/FormControls'
 import Dropdown from '../../components/admin/ui/Dropdown'
 import StatCard from '../../components/admin/widgets/StatCard'
-import AIInsightCard from '../../components/admin/widgets/AIInsightCard'
-import Sparkline from '../../components/admin/widgets/Sparkline'
 import ProductImportModal from '../../components/admin/ProductImportModal'
 import { BoxIcon } from '../../components/admin/icons'
 
+// Product status maps to the DB `published` boolean — nothing else exists.
 const TABS = [
+  { key: 'all', label: 'Semua' },
   { key: 'published', label: 'Published' },
-  { key: 'drafts', label: 'Drafts' },
-  { key: 'hidden', label: 'Hidden' },
-  { key: 'under_review', label: 'Under Review' },
+  { key: 'drafts', label: 'Draft' },
 ]
 
 function nextProductId(products) {
@@ -41,7 +38,7 @@ export default function ProductsPage() {
   const { products, categories, updateProduct, deleteProduct, addProduct } = useStore()
   const navigate = useNavigate()
 
-  const [tab, setTab] = useState('published')
+  const [tab, setTab] = useState('all')
   const [q, setQ] = useState('')
   const [selectedCats, setSelectedCats] = useState(new Set())
   const [selected, setSelected] = useState(new Set())
@@ -50,38 +47,11 @@ export default function ProductsPage() {
 
   const catName = (id) => categories.find((c) => c.id === id)?.name || id
 
-  // ---- derived metrics for the widget row --------------------------------
-  const sparkline = useMemo(() => {
-    // Cumulative product count over the last 14 days, from real createdAt data.
-    const days = 14
-    const now = new Date()
-    const sorted = [...products].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
-    const pts = []
-    for (let i = days - 1; i >= 0; i--) {
-      const day = new Date(now)
-      day.setDate(day.getDate() - i)
-      day.setHours(23, 59, 59, 999)
-      pts.push(sorted.filter((p) => new Date(p.createdAt) <= day).length)
-    }
-    return pts
-  }, [products])
-
-  const insights = useMemo(() => {
-    const now = new Date()
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
-    const newThisMonth = products.filter((p) => new Date(p.createdAt) >= monthStart).length
-    const publishedCount = products.filter((p) => p.published).length
-    const lines = []
-    lines.push(`${publishedCount} produk sedang dipublish`)
-    lines.push(`${newThisMonth} produk baru ditambahkan bulan ini`)
-    lines.push('Lihat performa penjualan lengkap di Dashboard')
-    return lines
-  }, [products])
+  const publishedCount = products.filter((p) => p.published).length
 
   // ---- filtering ----------------------------------------------------------
   const filtered = products.filter((p) => {
-    const matchTab =
-      tab === 'published' ? p.published : tab === 'drafts' ? !p.published : false // Hidden/Under Review: not modeled in this POC
+    const matchTab = tab === 'all' ? true : tab === 'published' ? p.published : !p.published
     const matchQ =
       !q ||
       p.name.toLowerCase().includes(q.toLowerCase()) ||
@@ -132,21 +102,14 @@ export default function ProductsPage() {
         </AdminButton>
       </PageHeader>
 
-      {/* Widget row */}
-      <div className="mb-4 flex flex-wrap items-start gap-4">
+      {/* Product count — real data only */}
+      <div className="mb-4 max-w-[300px]">
         <StatCard
           icon={BoxIcon}
           label="Total Sparepart"
           value={products.length}
-          delta={7}
-          caption="Dari minggu lalu"
-          chart={
-            <div className="h-14 w-[240px] max-w-full">
-              <Sparkline data={sparkline} color="var(--adm-mint)" />
-            </div>
-          }
+          sub={`${publishedCount} dipublish`}
         />
-        <AIInsightCard insights={insights} />
       </div>
 
       {/* Table card */}
@@ -303,16 +266,6 @@ export default function ProductsPage() {
                               {p.published ? <EyeSlash size={16} /> : <Eye size={16} />}
                               {p.published ? 'Jadikan draft' : 'Publish'}
                             </button>
-                            {p.published && (
-                              <a
-                                href={`/store#/product/${p.id}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] text-black hover:bg-[var(--adm-bg)]"
-                              >
-                                <ArrowSquareOut size={16} /> Lihat di toko
-                              </a>
-                            )}
                           </div>
                         )}
                       />
@@ -323,9 +276,7 @@ export default function ProductsPage() {
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={6} className="py-10 text-center text-[var(--adm-muted)]">
-                    {['hidden', 'under_review'].includes(tab)
-                      ? 'Status ini belum tersedia pada versi POC ini.'
-                      : 'Tidak ada produk yang cocok.'}
+                    Tidak ada produk yang cocok.
                   </td>
                 </tr>
               )}
