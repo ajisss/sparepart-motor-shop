@@ -280,13 +280,14 @@ export default function ProductFormPage() {
         </div>
       </div>
 
-      {/* Floating action bar */}
-      <div className="fixed bottom-6 left-1/2 z-40 -translate-x-1/2">
-        <div className="flex items-center gap-2 rounded-full border border-[var(--adm-border)] bg-white p-1.5 shadow-[0_10px_40px_rgba(0,0,0,0.16)]">
+      {/* Floating action bar — spans the content area (right of the 279px
+          sidebar on lg), buttons right-aligned. */}
+      <div className="fixed bottom-3 left-3 right-3 z-40 lg:left-[303px]">
+        <div className="flex items-center justify-end gap-2 rounded-[20px] border border-[var(--adm-border)] bg-white px-4 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.10)]">
           <button
             type="button"
             onClick={() => handleSave(true)}
-            className="rounded-full px-5 py-2.5 text-[13px] font-medium text-[var(--adm-ink)] hover:bg-[var(--adm-bg)]"
+            className="rounded-full border border-[var(--adm-border)] bg-white px-5 py-2.5 text-[13px] font-medium text-[var(--adm-ink)] hover:bg-[var(--adm-bg)]"
           >
             Simpan Draft
           </button>
