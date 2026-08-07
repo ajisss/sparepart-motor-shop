@@ -216,3 +216,32 @@ The abstraction boundary is the store hooks, so consumer components barely chang
 - Storefront is no longer fully static — function cold starts (mitigated by Fluid Compute).
 - Image upload (Vercel Blob) intentionally deferred; confirm URL-only products are acceptable for phase 1.
 - Confirm keeping product IDs as `text` (`p1`, `p2` …) from the current seed vs. switching to UUIDs.
+
+## 12. Reconciliation — what actually shipped (updated 2026-08-07)
+
+The core design (Neon source of truth, Vercel Functions read/write API, normalized
+schema, hook seam, security gating) shipped as designed. Intentional changes made
+during implementation, driven by evolving requirements:
+
+- **`stock` removed** — the catalog has no transactions, so the `stock` column and all
+  its UI (storefront badge, admin form field, low-stock metrics/notifications, CSV
+  import column) were dropped. The schema, data-access, and seed no longer reference it.
+- **Reviews/rating removed** earlier and never added to the schema (as this spec already reflected).
+- **Admin data layer = "API-backed store" (Option B).** The admin screens were more
+  deeply coupled to the local store than section 6 assumed (Dashboard metrics, search),
+  so instead of rewiring each screen, `StoreProvider` itself fetches products/categories
+  from the admin API on mount and routes its mutators through the API — gated to the
+  admin build via `import.meta.env.VITE_APP_TARGET === 'admin'`.
+- **Dev bridge** (`dev/api-bridge.js`) added so `/api/*` runs under `vite` dev locally
+  against Neon — replaces the plan's assumed `vercel dev` (Vercel CLI unavailable; the
+  Vercel account belongs to a third party).
+- **Admin slimmed to Dashboard + Produk.** All order/sales/revenue/customer/chat/settings/
+  integration/help UI and routes were removed to match reality (catalog-only). Dashboard
+  now shows product-focused stats (Total Produk, Produk Unggulan, Total Kategori) + a
+  recent-products list.
+- **Provisioning** done via a Neon account owned by the business (direct connection
+  string) rather than `vercel integration add neon`, decoupling the database from the
+  third-party Vercel account.
+
+Still open (deploy-time): storefront should use a **read-only Neon role** (both currently
+use one owner role locally). See `docs/deployment.md`.

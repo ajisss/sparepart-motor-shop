@@ -1010,3 +1010,26 @@ git commit -m "docs: neon env + seed instructions"
 - **Placeholders:** none — every code step has real code. Consumer edits in T8/T9 reference the exact grep targets.
 - **Type consistency:** product shape (`images: string[]`, `compatibleWith`, `category`, `videoUrl`, `isFeatured`) is defined in T2 `shapeProduct` and consumed unchanged by hooks/UI. `requireAdmin` return shape consistent across T4/T5/T6. Hook return shape `{ products, loading, error }` consistent T8/consumers.
 - **Known risk:** T8 changes hook return types — every call site must be updated in the same task or the build breaks. The task step calls this out and instructs a grep sweep.
+
+---
+
+## Completion status (updated 2026-08-07)
+
+| Task | Status |
+|------|--------|
+| 1 DB client + migration | ✅ done (migration later dropped `stock`) |
+| 2 Product data-access | ✅ done (+ transaction fix; `stock` removed) |
+| 3 Seed + categories | ✅ done (+ DDL-split & `featured_order` fixes) |
+| 4 HTTP + auth helpers | ✅ done |
+| 5 Public read endpoints | ✅ done |
+| 6 Admin write endpoints | ✅ done |
+| 7 Client fetch layer | ✅ done |
+| 8 Storefront hooks → API | ✅ done (+ `stock` UI removed) |
+| 9 Admin → API | ✅ done, but via **Option B (API-backed StoreProvider)**, not the per-screen approach here; `stock`/review fields dropped |
+| 10 Verify + docs | ✅ verified end-to-end in the browser; docs now in `docs/deployment.md` |
+
+**Beyond this plan (added mid-flight, per user requests):** removed `stock` entirely; added the dev-only Vite API bridge (`dev/api-bridge.js`); slimmed the admin to Dashboard + Produk (removed orders/sales/chat/settings/integration/help). See the spec's §12 Reconciliation.
+
+**Provisioning** was done against a business-owned Neon account (direct connection string), not `vercel integration add neon`.
+
+**Open (deploy-time):** storefront should use a read-only Neon role; the two Vercel projects and their env vars are documented in `docs/deployment.md`.
