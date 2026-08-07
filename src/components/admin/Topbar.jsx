@@ -91,7 +91,7 @@ export default function Topbar() {
 
   return (
     <>
-      <header className="flex h-[68px] items-center gap-4 rounded-[24px] bg-white px-4">
+      <header className="flex h-[68px] items-center gap-4 rounded-[12px] bg-white px-4">
         {/* Brand */}
         <div className="flex items-center gap-2 pr-2">
           <img src={dmbLogo} alt="DMB Moto Shop" className="h-9 w-auto" />

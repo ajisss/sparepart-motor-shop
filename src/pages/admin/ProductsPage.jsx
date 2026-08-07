@@ -124,7 +124,7 @@ export default function ProductsPage() {
                 key={t.key}
                 onClick={() => setTab(t.key)}
                 className={`flex h-[47px] items-center justify-center rounded-[100px] px-5 text-[16px] transition-colors ${
-                  tab === t.key ? 'bg-[#f5fcf0] text-black' : 'text-[var(--adm-muted)] hover:text-black'
+                  tab === t.key ? 'bg-[var(--adm-bg)] text-[var(--adm-ink)]' : 'text-[var(--adm-muted)] hover:text-[var(--adm-ink)]'
                 }`}
               >
                 {t.label}
@@ -179,15 +179,15 @@ export default function ProductsPage() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[900px] text-left">
             <thead>
-              <tr className="rounded-[40px] bg-[var(--adm-bg)] text-[16px] text-[var(--adm-muted)]">
-                <th className="w-12 rounded-l-[40px] py-4 pl-6">
+              <tr className="rounded-[12px] bg-[var(--adm-bg)] text-[16px] text-[var(--adm-muted)]">
+                <th className="w-12 rounded-l-[12px] py-4 pl-6">
                   <AdminCheckbox checked={allChecked} onChange={toggleAll} />
                 </th>
                 <th className="py-4 font-normal">Product Name</th>
                 <th className="py-4 font-normal">Category</th>
                 <th className="py-4 font-normal">Price</th>
                 <th className="py-4 font-normal">Status</th>
-                <th className="rounded-r-[40px] py-4 pr-6 font-normal">Action</th>
+                <th className="rounded-r-[12px] py-4 pr-6 font-normal">Action</th>
               </tr>
             </thead>
             <tbody>

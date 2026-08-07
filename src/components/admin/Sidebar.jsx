@@ -43,7 +43,7 @@ const MENU = [
 
 export default function Sidebar() {
   return (
-    <aside className="relative hidden w-[279px] shrink-0 flex-col overflow-hidden rounded-[40px] bg-white lg:flex">
+    <aside className="relative hidden w-[279px] shrink-0 flex-col overflow-hidden rounded-[12px] bg-white lg:flex">
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-6 pb-[200px]">
         {/* Menu */}
         <div className="flex flex-col gap-2">

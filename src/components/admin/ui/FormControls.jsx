@@ -70,7 +70,7 @@ export function AdminTextarea({ error, className = '', ...props }) {
     : 'border-[var(--adm-border)] focus:border-[var(--adm-info)]'
   return (
     <textarea
-      className={`w-full rounded-[20px] border bg-white px-4 py-3 text-[15px] text-black placeholder:text-[var(--adm-muted)] focus:outline-none transition-colors ${border} ${className}`}
+      className={`w-full rounded-[12px] border bg-white px-4 py-3 text-[15px] text-black placeholder:text-[var(--adm-muted)] focus:outline-none transition-colors ${border} ${className}`}
       {...props}
     />
   )

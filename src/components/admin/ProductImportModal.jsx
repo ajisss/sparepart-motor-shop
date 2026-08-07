@@ -95,7 +95,7 @@ export default function ProductImportModal({ categories, nextId, onImport, onClo
               setDragOver(false)
               if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0])
             }}
-            className={`flex h-[180px] cursor-pointer flex-col items-center justify-center gap-2 rounded-[20px] border border-dashed transition-colors ${
+            className={`flex h-[180px] cursor-pointer flex-col items-center justify-center gap-2 rounded-[12px] border border-dashed transition-colors ${
               dragOver ? 'border-[var(--adm-info)] bg-[var(--adm-bg)]' : 'border-[var(--adm-border-strong)]'
             }`}
           >

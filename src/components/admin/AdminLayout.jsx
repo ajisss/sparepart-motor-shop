@@ -13,7 +13,7 @@ export default function AdminLayout() {
       <Topbar />
       <div className="flex min-h-0 flex-1 gap-3">
         <Sidebar />
-        <main className="min-w-0 flex-1 overflow-y-auto rounded-[24px]">
+        <main className="min-w-0 flex-1 overflow-y-auto rounded-[12px]">
           <Outlet />
         </main>
       </div>

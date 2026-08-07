@@ -283,7 +283,7 @@ export default function ProductFormPage() {
       {/* Floating action bar — spans the content area (right of the 279px
           sidebar on lg), buttons right-aligned. */}
       <div className="fixed bottom-3 left-3 right-3 z-40 lg:left-[303px]">
-        <div className="flex items-center justify-end gap-2 rounded-[20px] border border-[var(--adm-border)] bg-white px-4 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.10)]">
+        <div className="flex items-center justify-end gap-2 rounded-[12px] border border-[var(--adm-border)] bg-white px-4 py-3 shadow-[0_10px_40px_rgba(0,0,0,0.10)]">
           <button
             type="button"
             onClick={() => handleSave(true)}
