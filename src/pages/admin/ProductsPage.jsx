@@ -133,7 +133,7 @@ export default function ProductsPage() {
       </PageHeader>
 
       {/* Widget row */}
-      <div className="mb-4 flex flex-wrap gap-4">
+      <div className="mb-4 flex flex-wrap items-start gap-4">
         <StatCard
           icon={BoxIcon}
           label="Total Sparepart"

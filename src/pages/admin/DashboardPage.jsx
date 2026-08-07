@@ -28,7 +28,7 @@ export default function DashboardPage() {
       {/* Page heading */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-[26px] font-semibold text-black">Selamat datang, {name}!</h1>
+          <h1 className="text-[26px] font-semibold text-[var(--adm-ink)]">Selamat datang, {name}!</h1>
           <p className="mt-0.5 text-[14px] text-[var(--adm-muted)]">Berikut ringkasan dashboard kamu</p>
         </div>
       </div>
@@ -41,23 +41,23 @@ export default function DashboardPage() {
       </div>
 
       {/* Produk Terbaru */}
-      <div className="adm-card mt-4 p-6">
-        <h2 className="text-[18px] font-semibold text-black">Produk Terbaru</h2>
+      <div className="adm-card mt-6 p-6">
+        <h2 className="text-[18px] font-semibold text-[var(--adm-ink)]">Produk Terbaru</h2>
         {recentProducts.length === 0 ? (
           <p className="mt-4 text-[14px] text-[var(--adm-muted)]">Belum ada produk.</p>
         ) : (
-          <div className="mt-4 flex flex-col divide-y divide-[var(--adm-border)]">
+          <div className="mt-3 flex flex-col">
             {recentProducts.map((p) => (
               <Link
                 key={p.id}
                 to={`/admin/products/${p.id}`}
-                className="flex items-center justify-between gap-4 py-3 text-[14px] hover:bg-[var(--adm-bg)]"
+                className="-mx-3 flex items-center justify-between gap-4 rounded-[10px] px-3 py-2.5 transition-colors hover:bg-[var(--adm-bg)]"
               >
                 <div className="min-w-0">
-                  <p className="truncate font-medium text-black">{p.name}</p>
+                  <p className="truncate text-[14px] font-medium text-[var(--adm-ink)]">{p.name}</p>
                   <p className="truncate text-[12px] text-[var(--adm-muted)]">{catName(p.category)}</p>
                 </div>
-                <span className="shrink-0 font-medium text-black">{formatCurrency(p.price)}</span>
+                <span className="shrink-0 text-[14px] font-medium text-[var(--adm-ink)]">{formatCurrency(p.price)}</span>
               </Link>
             ))}
           </div>
