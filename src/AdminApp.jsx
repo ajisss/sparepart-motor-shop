@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { ADMIN_LOGIN_SLUG } from './config/features'
 import { StoreProvider } from './store/StoreProvider'
 import { AuthProvider } from './context/AuthContext'
 import { ChatProvider } from './context/ChatContext'
@@ -23,13 +22,13 @@ export default function AdminApp() {
           <AuthProvider>
             <ChatProvider>
               <Routes>
-                {/* Sign-in behind the secret slug; the guessable /admin/login
-                    just forwards to it. */}
-                <Route path={`/admin/${ADMIN_LOGIN_SLUG}`} element={<AdminLoginPage />} />
-                <Route path="/admin/login" element={<Navigate to={`/admin/${ADMIN_LOGIN_SLUG}`} replace />} />
+                <Route path="/login" element={<AdminLoginPage />} />
 
+                {/* This deployment only ever serves the admin, on its own
+                    subdomain, so the pages sit at the root — an /admin prefix
+                    here would just say "admin" twice. */}
                 <Route
-                  path="/admin"
+                  path="/"
                   element={
                     <RequireAdmin>
                       <AdminLayout />
@@ -43,8 +42,9 @@ export default function AdminApp() {
                   <Route path="staff" element={<StaffPage />} />
                 </Route>
 
-                {/* Everything else on the admin deployment funnels into /admin. */}
-                <Route path="*" element={<Navigate to="/admin" replace />} />
+                {/* Everything else funnels to the dashboard — which also
+                    catches bookmarks of the old /admin/* paths. */}
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </ChatProvider>
           </AuthProvider>
